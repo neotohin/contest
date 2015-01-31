@@ -7,11 +7,23 @@
 <div>
   <p>Your assigned articles by category are:</p>
   <% @details.each do |area_id, documents| %>
-    <p>
-      <strong><%= Area.find(area_id).name %></strong>
-    </p>
+      <p>
+        <strong><%= Area.find(area_id).name %></strong>
+      </p>
       <% documents.each do |document| %>
-        <li><a href="https://www.bashkoff-family.com/edible/<%= document.link %>"><%= document.pretty_title %></a></li>
+          <li>
+            <a href="https://www.bashkoff-family.com/edible/<%= document.link %>"><%= document.pretty_title %></a>
+          </li>
       <% end %>
+  <% end %>
+</div>
+
+<br/><br/>
+<div>
+  <strong>Special instructions:</strong>
+  <ul>
+    <% @judge.areas.pluck(:instructions).each do |instruction| %>
+        <li><%= instruction %></li>
     <% end %>
+  </ul>
 </div>
