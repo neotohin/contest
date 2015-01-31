@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  email: MyString
+  sent_mail: false
+  sent_mail_time: 2015-01-30 23:08:45
+
+two:
+  name: MyString
+  email: MyString
+  sent_mail: false
+  sent_mail_time: 2015-01-30 23:08:45
