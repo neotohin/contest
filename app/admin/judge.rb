@@ -1,5 +1,7 @@
 ActiveAdmin.register Judge do
 
+  permit_params :list, :of, :attributes, :on, :model, :name, :email, :index, :sent_mail, :sent_mail_time
+
   index do
 
     column :name do |judge|

@@ -1,5 +1,8 @@
 ActiveAdmin.register Document, :as => "Article" do
 
+  permit_params :list, :of, :attributes, :on, :model, :title, :link, :index
+
+
   index do
     column :code do |article|
       link_to article.code, admin_category_path(article.area_id)
@@ -46,6 +49,15 @@ ActiveAdmin.register Document, :as => "Article" do
         link_to j.name, admin_judge_path(judge_id) if j
       end
     end
+  end
+
+  form do |f|
+    inputs 'Details' do
+      input :title
+      input :link
+      input :id
+    end
+    actions
   end
 
 end

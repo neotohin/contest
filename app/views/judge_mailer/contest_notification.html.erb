@@ -10,20 +10,20 @@
       <p>
         <strong><%= Area.find(area_id).name %></strong>
       </p>
+
+      <p>
+        <%= Area.find(area_id).instructions %>
+      </p>
       <% documents.each do |document| %>
-          <li>
-            <a href="https://www.bashkoff-family.com/edible/<%= document.link %>"><%= document.pretty_title %></a>
-          </li>
+          <% if document.code.start_with?("SI") %>
+              <li>
+                <%= document.pretty_title %>
+              </li>
+          <% else %>
+              <li>
+                <a href="https://www.bashkoff-family.com/edible/<%= document.link %>"><%= document.pretty_title %></a>
+              </li>
+          <% end %>
       <% end %>
   <% end %>
-</div>
-
-<br/><br/>
-<div>
-  <strong>Special instructions:</strong>
-  <ul>
-    <% @judge.areas.pluck(:instructions).each do |instruction| %>
-        <li><%= instruction %></li>
-    <% end %>
-  </ul>
 </div>
