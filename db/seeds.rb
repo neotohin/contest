@@ -70,7 +70,7 @@ node_texts = []
 node_links = []
 index      = 0
 html_dom.xpath("//li//a").map do |node|
-  next unless m = /^\s#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s/.match(node.content)
+  next unless m = /^\s#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s+--/.match(node.content)
   node_texts << node.content.strip
   node_links << node.attribute("href")
   # puts node.content.strip

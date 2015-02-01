@@ -13,7 +13,7 @@ ActiveAdmin.register Document, :as => "Article" do
       link_to Area.find(category_id).name, admin_category_path(category_id)
     end
 
-    column :article do |article|
+    column :article, :sortable => :pretty_title do |article|
       link_to article.pretty_title, admin_article_path(article.id)
     end
 
