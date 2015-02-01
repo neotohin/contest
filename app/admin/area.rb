@@ -2,6 +2,9 @@ ActiveAdmin.register Area, :as => "Category" do
 
   permit_params :list, :of, :attributes, :on, :model, :name, :code, :instructions, :index
 
+  preserve_default_filters!
+  filter :documents, :label => "Articles"
+
   index do
     column :code
 

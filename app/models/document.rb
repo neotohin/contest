@@ -17,6 +17,14 @@ class Document < ActiveRecord::Base
     ""
   end
 
+  def judge
+    Judge.find(self.judge_id)
+  end
+
+  def area
+    Area.find(self.area_id)
+  end
+
   private
 
   attr_reader :regex

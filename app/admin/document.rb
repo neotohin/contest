@@ -3,6 +3,13 @@ ActiveAdmin.register Document, :as => "Article" do
   permit_params :list, :of, :attributes, :on, :model, :title, :link, :index
 
 
+  scope("All") {|scope| scope.all}
+  scope("Articles Assigned") { |scope| scope.where("JUDGE_ID IS NOT NULL") }
+  scope("Articles Not Assigned") { |scope| scope.where("JUDGE_ID IS NULL") }
+
+  preserve_default_filters!
+  filter :document, :label => "Article"
+
   index do
     column :code do |article|
       link_to article.code, admin_category_path(article.area_id)
@@ -13,7 +20,7 @@ ActiveAdmin.register Document, :as => "Article" do
       link_to Area.find(category_id).name, admin_category_path(category_id)
     end
 
-    column :article, :sortable => :pretty_title do |article|
+    column :article do |article|
       link_to article.pretty_title, admin_article_path(article.id)
     end
 

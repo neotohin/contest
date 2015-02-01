@@ -2,6 +2,14 @@ ActiveAdmin.register Judge do
 
   permit_params :list, :of, :attributes, :on, :model, :name, :email, :index, :sent_mail, :sent_mail_time
 
+  scope("All") {|scope| scope.all}
+  scope("Mail Sent") { |scope| scope.where(sent_mail: true) }
+  scope("Mail Not Sent") { |scope| scope.where(sent_mail: false) }
+
+  preserve_default_filters!
+  filter :documents, :label => "Articles"
+  filter :areas, :label => "Categories"
+
   index do
 
     column :name do |judge|
