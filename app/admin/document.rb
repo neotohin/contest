@@ -44,10 +44,12 @@ ActiveAdmin.register Document, :as => "Article" do
       row :pretty_title
 
       row :raw_title do |article|
-          article.title
+        article.title
       end
 
-      row :link
+      row :link do |article|
+        link_to article.link, article.link , :target => "_blank"
+      end
 
       row :judge do |article|
         judge_id = article.judge_id
