@@ -4,7 +4,7 @@ require 'nokogiri'
 # Fill settings table with info
 Setting.destroy_all
 Setting.new(
-    :articles_home    => "http://www.bashkoff-family.com/edible/",
+    :articles_home    => "https://s3.amazonaws.com/ediblecommunities/articles-2015/",
     :csv_basename     => "Judge mgmt.csv",
     :mail_option      => false,
     :default_email    => "bashki.edible@gmail.com",
@@ -61,26 +61,12 @@ end
 
 # Get the article names from the server
 
-# response = Curl.get(Setting.first.articles_home)
-response = Curl.get("http://www.bashkoff-family.com/edible/")
-puts response.body_str
-html_dom = Nokogiri::HTML(response.body_str)
-
-node_texts = []
-node_links = []
-index      = 0
-html_dom.xpath("//li//a").map do |node|
-  next unless m = /^\s#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s+--/.match(node.content)
-  node_texts << node.content.strip
-  node_links << node.attribute("href")
-  # puts node.content.strip
-  # puts node.attribute("href")
-  # puts m[1]
-  d = Document.new(
-      :index => index,
-      :title => node.content.strip,
-      :link  => node.attribute("href")
-  )
+s3 = AWS::S3.new
+objects = s3.buckets["edible-2015-contest"].objects
+objects.each_with_index do |obj, index|
+  next unless m = /^#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s+--/.match(obj.key)
+  puts obj.key
+  d = Document.new(:index => index.to_s, :title => obj.key.strip, :link  => obj.url_for(:read))
   d.area_id = Area.where(:code => m[1]).first.id
   d.save
   index += 1

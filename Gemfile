@@ -16,6 +16,8 @@ gem 'mail'
 gem 'nokogiri'
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
+gem 'aws-sdk', '~> 1.42.0'
+
 
 group :development, :test do
   gem 'sqlite3'

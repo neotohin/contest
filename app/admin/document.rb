@@ -2,7 +2,6 @@ ActiveAdmin.register Document, :as => "Article" do
 
   permit_params :list, :of, :attributes, :on, :model, :title, :link, :index
 
-
   scope("All") {|scope| scope.all}
   scope("Articles Assigned") { |scope| scope.where("JUDGE_ID IS NOT NULL") }
   scope("Articles Not Assigned") { |scope| scope.where("JUDGE_ID IS NULL") }
