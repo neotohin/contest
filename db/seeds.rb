@@ -13,8 +13,6 @@ Setting.new(
     :category_letters => "SI-F-S-R-I"
 ).save
 
-
-
 # First extract the judges from the second and third rows of the csv file
 
 raw         = CSV.read("Judge mgmt.csv")
