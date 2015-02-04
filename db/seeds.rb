@@ -61,7 +61,11 @@ objects = s3.buckets["edible-2015-contest"].objects
 objects.each_with_index do |obj, index|
   next unless m = /^#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s+--/.match(obj.key)
   puts obj.key
-  d = Document.new(:index => index.to_s, :title => obj.key.strip, :link  => obj.url_for(:read))
+  d = Document.new({
+                       :index => index.to_s,
+                       :title => obj.key.strip,
+                       :link  => obj.url_for(:read, :expires => "2015-03-23")
+                   })
   d.area_id = Area.where(:code => m[1]).first.id
   d.save
 end
