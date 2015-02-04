@@ -1,11 +1,12 @@
 class Document < ActiveRecord::Base
 	belongs_to :judge
-  belongs_to :document
+  belongs_to :area
 
   # CATEGORY_LETTERS = "(#{Setting.first.category_prefix})"
   CATEGORY_LETTERS = "(SI|F|S|R|I)"
-  REGEX = "^#\\d+e?\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
-  SI_REGEX = "^#\\d+e?\\s((SI)\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\.docx"
+  REGEX     = "^#\\d+e?\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
+  LAX_REGEX = "^#\\d+e?\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)"
+  SI_REGEX  = "^#\\d+e?\\s((SI)\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\.docx"
 
   def pretty_title
     return regex[3] if document_regex
@@ -31,6 +32,6 @@ class Document < ActiveRecord::Base
 
   def document_regex
     return @regex if @regex
-    @regex = /#{REGEX}/.match(self.title) || /#{SI_REGEX}/.match(self.title)
+    @regex = /#{REGEX}/.match(self.title) || /#{SI_REGEX}/.match(self.title) || /#{LAX_REGEX}/.match(self.title)
   end
 end

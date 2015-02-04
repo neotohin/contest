@@ -74,9 +74,11 @@ ActiveAdmin.register Judge do
     end
 
     panel "Categories for this Judge" do
-      table_for(judge.areas) do |document|
-        document.column("Code") { |item| item.code }
-        document.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
+      table_for(judge.areas) do |category|
+        category.column("Code")   { |item| item.code }
+        category.column("Name")   { |item| link_to item.name, admin_category_path(item.id) }
+        category.column("Number of Articles")   { |item| item.documents.where(:judge => judge).count }
+        category.column("Weight") { |item| item.mappings.where(:judge => judge).first.weight }
       end
     end
 

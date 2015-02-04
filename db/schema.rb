@@ -57,14 +57,6 @@ ActiveRecord::Schema.define(version: 20150131042418) do
 
   add_index "areas", ["code"], name: "index_areas_on_code"
 
-  create_table "areas_judges", id: false, force: :cascade do |t|
-    t.integer "area_id"
-    t.integer "judge_id"
-  end
-
-  add_index "areas_judges", ["area_id"], name: "index_areas_judges_on_area_id"
-  add_index "areas_judges", ["judge_id"], name: "index_areas_judges_on_judge_id"
-
   create_table "documents", force: :cascade do |t|
     t.integer  "judge_id"
     t.integer  "area_id"
@@ -89,6 +81,17 @@ ActiveRecord::Schema.define(version: 20150131042418) do
   end
 
   add_index "judges", ["name"], name: "index_judges_on_name"
+
+  create_table "mappings", force: :cascade do |t|
+    t.integer  "area_id"
+    t.integer  "judge_id"
+    t.integer  "weight"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "mappings", ["area_id"], name: "index_mappings_on_area_id"
+  add_index "mappings", ["judge_id"], name: "index_mappings_on_judge_id"
 
   create_table "settings", force: :cascade do |t|
     t.string   "articles_home"

@@ -45,15 +45,12 @@ end.each_with_index do |row, index|
 
   3.times { row.shift }
 
-  judges_for_category = []
   judge_names.each_with_index do |judge, index|
     if row[index]
       j = Judge.where(:name => judge).first
-      judges_for_category << j
+      a.save && a.mappings.create(:judge => j, :weight => row[index].to_i)
     end
   end
-
-  a.judges << judges_for_category
 
 end
 
@@ -67,22 +64,25 @@ objects.each_with_index do |obj, index|
   d = Document.new(:index => index.to_s, :title => obj.key.strip, :link  => obj.url_for(:read))
   d.area_id = Area.where(:code => m[1]).first.id
   d.save
-  index += 1
 end
 
 # Now assign articles to each judge for every category
 
 Area.all.each do |area|
-  judges    = area.judges.shuffle
+  judges_pool = area.judges.map do |judge|
+    [judge] * judge.mappings.where(:area => area).first.weight
+  end.flatten
+
+  judges_pool.shuffle!
   documents = area.documents.shuffle
   puts "IN CATEGORY #{area.name} -------------------------------------------------------------"
-  puts "                         JUDGES (#{judges.count}): #{judges.map(&:name).join(", ")}"
+  puts "                         JUDGES (#{judges_pool.count}): #{judges_pool.map(&:name).join(", ")}"
   puts "                         DOCUMENTS (#{documents.count}): #{documents.map(&:index)}"
-  judges.each_with_index do |judge, judge_index|
+  judges_pool.each_with_index do |judge, judge_index|
   puts "            ASSIGNING JUDGE #{judge.name} ARTICLES ..................."
 
     judge_documents = documents.select do |d|
-      documents.index(d) % judges.length == judge_index
+      documents.index(d) % judges_pool.length == judge_index
     end
     puts "            ARTICLES #{judge_documents.map(&:index)}"
     judge.documents << judge_documents

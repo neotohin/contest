@@ -10,9 +10,13 @@ class CreateAreas < ActiveRecord::Migration
     end
     add_index :areas, :code
 
-    create_table :areas_judges, id: false do |t|
+    create_table :mappings do |t|
       t.belongs_to :area, index: true
       t.belongs_to :judge, index: true
+
+      t.integer :weight
+
+      t.timestamps null: false
     end
   end
 end

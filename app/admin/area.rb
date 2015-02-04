@@ -40,6 +40,8 @@ ActiveAdmin.register Area, :as => "Category" do
     panel "Judges for this Category" do
       table_for(category.judges) do |judge|
         judge.column("Judge") { |item| link_to item.name, admin_judge_path(item.id) }
+        judge.column("Number of Articles") { |item| item.documents.where(:area => category).count }
+        judge.column("Weight") { |item| item.mappings.where(:area => category).first.weight }
       end
     end
 
