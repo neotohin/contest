@@ -2,8 +2,19 @@ ActiveAdmin.register Area, :as => "Category" do
 
   permit_params :list, :of, :attributes, :on, :model, :name, :code, :instructions, :index
 
-  preserve_default_filters!
+  sidebar :status, :priority => 0 do
+    if Setting.first.mail_option
+      div "Mailings are activated", :style => "color: red"
+    else
+      div "Mailings are not activated"
+    end
+  end
+
   filter :documents, :label => "Articles"
+  filter :judges
+  filter :name
+  filter :code
+  filter :instructions
 
   index do
     column :code

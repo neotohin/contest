@@ -6,15 +6,24 @@ ActiveAdmin.register Document, :as => "Article" do
   scope("Articles Assigned") { |scope| scope.where("JUDGE_ID IS NOT NULL") }
   scope("Articles Not Assigned") { |scope| scope.where("JUDGE_ID IS NULL") }
 
-  preserve_default_filters!
-  filter :document, :label => "Article"
+  sidebar :status, :priority => 0 do
+    if Setting.first.mail_option
+      div "Mailings are activated", :style => "color: red"
+    else
+      div "Mailings are not activated"
+    end
+  end
+
+  filter :judge
+  filter :area, :label => "Category"
+  filter :title, :label => "Article"
 
   index do
     column :code do |article|
       link_to article.code, admin_category_path(article.area_id)
     end
 
-    column :category do |article|
+    column :category, sortable: 'areas.name' do |article|
       category_id = article.area_id
       link_to Area.find(category_id).name, admin_category_path(category_id)
     end
@@ -23,12 +32,18 @@ ActiveAdmin.register Document, :as => "Article" do
       link_to article.pretty_title, admin_article_path(article.id)
     end
 
-    column :judge do |article|
+    column :judge, :sortable => 'judges.name' do |article|
       judge_id = article.judge_id
       judge    = Judge.find(judge_id) if judge_id
       link_to judge.name, admin_judge_path(judge.id) if judge
     end
 
+  end
+
+  controller do
+    def scoped_collection
+      super.includes :area, :judge # prevents N+1 queries to your database
+    end
   end
 
   show :title => :pretty_title do

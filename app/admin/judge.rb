@@ -6,9 +6,20 @@ ActiveAdmin.register Judge do
   scope("Mail Sent") { |scope| scope.where(:sent_mail => true) }
   scope("Mail Not Sent") { |scope| scope.where(:sent_mail => nil) }
 
-  preserve_default_filters!
+  sidebar :status, :priority => 0 do
+    if Setting.first.mail_option
+      div "Mailings are activated", :style => "color: red"
+    else
+      div "Mailings are not activated"
+    end
+  end
+
   filter :documents, :label => "Articles"
   filter :areas, :label => "Categories"
+  filter :name
+  filter :email
+  filter :sent_mail
+  filter :sent_mail_time
 
   index do
 
