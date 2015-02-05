@@ -1,6 +1,6 @@
 class JudgeMailer < ApplicationMailer
 
-  default :from => Setting.first.default_email
+  default :from => %("#{Setting.first.default_person}" <#{Setting.first.default_email}>)
 
   add_template_helper(ApplicationHelper)
 
@@ -8,7 +8,7 @@ class JudgeMailer < ApplicationMailer
     @judge = judge
     @details = judge.documents.group_by(&:area_id)
 
-    mail(:to => "#{to_name} <#{to_email}>", :subject => Setting.first.email_subject)
+    mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)
   end
 
 end
