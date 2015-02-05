@@ -21,10 +21,12 @@ gem 'aws-sdk', '~> 1.42.0'
 
 group :development, :test do
   gem 'sqlite3'
-  gem 'byebug'
   gem 'web-console', '~> 2.0'
   gem 'spring', '~> 1.2.0'
   gem 'letter_opener'
+  gem 'pry',         '~> 0.9.12'
+  gem 'pry-byebug',  '~> 1.3.2'
+  gem 'pry-rails',   '~> 0.3.2'
 end
 
 group :production do

@@ -1,29 +1,93 @@
-<p><%= @judge.name %></p>
+<p>Dear <%= get_first_name(@judge.name) %>,</p>
 
 <div>
-  Thank you for agreeing to participate as a judge in Edible's contest.
+  <p>
+    Thank you for agreeing to judge the 2015 EDDY Awards! We’re thrilled
+    you’ll be
+    helping recognize the wonderful work produced by independent publishers who
+    make up Edible Communities.
+  </p>
+
+  <p>
+    Below are the links to entries we’d like for you to view and judge. Please
+    reply to this email by (lucky) Friday, February 13 with your favorite
+    selection from each category with a sentence or two that describes what you
+    especially like about the piece. We’ll also need you to select a runner up
+    in
+    each category and provide a soundbite as well. While the list of links may
+    look long, many of the entries require just a few minutes. Feature, Story
+    and
+    Special Issue categories involve more reading while Recipe and Imagery
+    categories are quick views of visuals.
+  </p>
+
+  <p>
+    Depending on your browser, each link will either open up a new window or
+    tab
+    or potentially even download the PDF or jpeg to your computer. If you
+    experience any problems viewing your entries, please email
+    eddyawards@ediblemedia.com to let us know.
+  </p>
+
+  <p>
+    Once again, thanks so much for being a crucial part of the EDDY Awards.
+    Please
+    quickly reply to this email so we know you received it.
+  </p>
+
+  <p>
+    My best,<br/>Lara Bashkoff
+  </p>
+
+  <p>
+    Chief Digital Officer, Edible Media<br/>
+    lara@ediblemedia.com
+  </p>
+
+  <p>
+    P.S. Your selections will help determine 5 finalists in each category,
+    which
+    will be posted to ediblefeast.com for Readers’ Choice winners on Monday,
+    February 22. Your vote will also inform Critics’ Choice winners. All winners
+    will be revealed online on Friday, March 20.
+  </p>
+
+  <hr/>
 </div>
 
 <div>
-  <p>Your assigned articles by category are:</p>
-  <% @details.each do |area_id, documents| %>
+  <p>Your entries by category are:</p>
+  <% @details.each do |major_code, documents| %>
       <p>
-        <strong><%= Area.find(area_id).name %></strong>
+        <strong><%= get_major(major_code) %></strong>
       </p>
 
       <p>
-        <%= Area.find(area_id).instructions %>
+        <%= Area.find(documents.first.area_id).instructions %>
       </p>
-      <% documents.each do |document| %>
-          <% if document.code.start_with?("SI") %>
-              <li>
-                <%= document.pretty_title %>
-              </li>
-          <% else %>
-              <li>
-                <a href="<%= document.link %>"><%= document.pretty_title %></a>
-              </li>
-          <% end %>
+
+      <% documents.group_by(&:area_id).each do |area_id, docs| %>
+          <div style="margin-left: 25px;">
+            <p>
+              <strong><%= Area.find(area_id).name %></strong>
+            </p>
+            <% docs.each do |doc| %>
+                <% if doc.code.start_with?("SI") %>
+                    <li>
+                      <%= doc.pretty_title %>
+                    </li>
+                <% else %>
+                    <li>
+                      <a href="<%= doc.link %>"><%= doc.pretty_title %></a>
+                    </li>
+                <% end %>
+            <% end %>
+          </div>
       <% end %>
+      <br/>
   <% end %>
 </div>
+<br/>
+<hr/>
+<br/>
+

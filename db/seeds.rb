@@ -4,8 +4,8 @@ require 'nokogiri'
 # Fill settings table with info
 Setting.destroy_all
 Setting.new(
-    :articles_home    => "https://s3.amazonaws.com/ediblecommunities/articles-2015/",
-    :csv_basename     => "Judge mgmt.csv",
+    :articles_home    => 'https://s3.amazonaws.com/ediblecommunities/articles-2015/',
+    :csv_basename     => 'Entry distribution to judges tables.csv',
     :mail_option      => false,
     :default_email    => "bashki.edible@gmail.com",
     :default_person   => "Lara Bashkoff",
@@ -15,7 +15,7 @@ Setting.new(
 
 # First extract the judges from the second and third rows of the csv file
 
-raw         = CSV.read("Judge mgmt.csv")
+raw         = CSV.read("Entry distribution to judges tables.csv")
 judge_names = raw[1]
 3.times { judge_names.shift }
 judge_names.compact!
