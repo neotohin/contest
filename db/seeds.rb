@@ -3,22 +3,21 @@ require 'nokogiri'
 
 # Fill settings table with info
 Setting.destroy_all
-Setting.new(
+Setting.create(
     :articles_home    => 'https://s3.amazonaws.com/ediblecommunities/articles-2015/',
     :csv_basename     => 'Entry distribution to judges tables.csv',
     :mail_option      => false,
-    :default_email    => "bashki.edible@gmail.com",
-    :default_person   => "Lara Bashkoff",
-    :email_subject    => "Your Articles for Review",
+    :default_email    => 'bashki.edible@gmail.com',
+    :default_person   => 'Lara Bashkoff',
+    :email_subject    => 'Your Articles for Review',
     :category_letters => Supercategory::SUPER_CATEGORIES.keys.join("-")
-).save
+)
 
 # Populate the supercategories table
 
 Supercategory.destroy_all
 Supercategory::SUPER_CATEGORIES.each do |letter_code, name|
-  s = Supercategory.new(:letter_code => letter_code, :display_name => name)
-  s.save
+  s = Supercategory.create(:letter_code => letter_code, :display_name => name)
 end
 
 # First extract the judges from the second and third rows of the csv file
@@ -35,7 +34,7 @@ judge_emails = judge_emails[0..judge_names.length - 1]
 Judge.destroy_all
 
 judge_names.each_with_index do |judge, index|
-  Judge.new(:index => index, :name => judge, :email => judge_emails[index]).save
+  Judge.create(:index => index, :name => judge, :email => judge_emails[index])
 end
 
 # Extract the categories from the csv file
@@ -47,7 +46,7 @@ Category.destroy_all
 raw.select do |raw_row|
   /^#{CATEGORY_LETTERS}\.\d$/.match(raw_row.first)
 end.each_with_index do |row, index|
-  a = Category.new(:name => row[1], :code => row[0], :index => index)
+  a = Category.create(:name => row[1], :code => row[0], :index => index)
   category_letter = /\A#{CATEGORY_LETTERS}\./.match(a.code)[1]
   a.supercategory = Supercategory.where(:letter_code => category_letter).first
   a.save
@@ -70,11 +69,11 @@ objects = s3.buckets["edible-2015-contest"].objects
 objects.each_with_index do |obj, index|
   next unless m = /^#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s+--/.match(obj.key)
   puts obj.key
-  d = Article.new({
-                       :index => index.to_s,
-                       :title => obj.key.strip,
-                       :link  => obj.url_for(:read, :expires => "2015-03-23")
-                   })
+  d = Article.create(
+      :index => index.to_s,
+      :title => obj.key.strip,
+      :link  => obj.url_for(:read, :expires => "2015-03-23")
+  )
   d.category_id = Category.where(:code => m[1]).first.id
   d.save
 end

@@ -18,15 +18,17 @@ ActiveAdmin.register Supercategory do
   filter :categories
 
   index do
-    column :letter_code do |supercategory|
-      link_to supercategory.letter_code, admin_supercategory_path(supercategory.id)
+    column do |supercategory|
+      ul do
+        li link_to supercategory.display_name, admin_supercategory_path(supercategory.id)
+        li do
+          span "Category code:"
+          span { link_to supercategory.letter_code, admin_supercategory_path(supercategory.id) }
+        end
+        li "Instructions - #{supercategory.instructions}"
+        li "Number of categories: #{supercategory.categories.count}"
+      end
     end
-
-    column :display_name do |supercategory|
-      link_to supercategory.display_name, admin_supercategory_path(supercategory.id)
-    end
-
-    column("Categories") { |item| item.categories.count }
   end
 
   show do
@@ -42,9 +44,9 @@ ActiveAdmin.register Supercategory do
 
     panel "Categories For This Supercategory" do
       table_for(supercategory.categories) do |category|
-        category.column("Code")  { |item| item.code }
-        category.column("Name")  { |item| link_to item.name, admin_category_path(item.id) }
-        category.column("Number of Articles")   { |item| item.articles.count }
+        category.column("Code") { |item| item.code }
+        category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
+        category.column("Number of Articles") { |item| item.articles.count }
       end
     end
   end
