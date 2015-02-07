@@ -1,6 +1,8 @@
-ActiveAdmin.register Area, :as => "Category" do
+ActiveAdmin.register Category do
 
   permit_params :list, :of, :attributes, :on, :model, :name, :code, :instructions, :index
+
+  menu :priority => 4
 
   sidebar :status, :priority => 0 do
     if Setting.first.mail_option
@@ -10,7 +12,7 @@ ActiveAdmin.register Area, :as => "Category" do
     end
   end
 
-  filter :documents, :label => "Articles"
+  filter :articles, :label => "Articles"
   filter :judges
   filter :name
   filter :code
@@ -24,7 +26,7 @@ ActiveAdmin.register Area, :as => "Category" do
     end
 
     column "Article Count" do |category|
-      category.documents.count
+      category.articles.count
     end
 
     column "Judge Count" do |category|
@@ -35,29 +37,29 @@ ActiveAdmin.register Area, :as => "Category" do
   show do
 
     attributes_table do
+      row :supercategory
       row :code
       row :name
-      row :instructions
 
       row "# Judges" do
         category.judges.count
       end
 
       row "# Articles" do
-        category.documents.count
+        category.articles.count
       end
     end
 
     panel "Judges for this Category" do
       table_for(category.judges) do |judge|
         judge.column("Judge") { |item| link_to item.name, admin_judge_path(item.id) }
-        judge.column("Number of Articles") { |item| item.documents.where(:area => category).count }
-        judge.column("Weight") { |item| item.mappings.where(:area => category).first.weight }
+        judge.column("Number of Articles") { |item| item.articles.where(:category => category).count }
+        judge.column("Weight") { |item| item.mappings.where(:category => category).first.weight }
       end
     end
 
     panel "Articles for this Category" do
-      table_for(category.documents) do |document|
+      table_for(category.articles) do |document|
         document.column("Code") { |item| item.code }
         document.column("Title") { |item| link_to item.pretty_title, admin_article_path(item.id) }
       end

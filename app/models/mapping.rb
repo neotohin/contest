@@ -1,4 +1,4 @@
 class Mapping < ActiveRecord::Base
-  belongs_to :area
+  belongs_to :category
   belongs_to :judge
 end

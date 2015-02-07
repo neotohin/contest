@@ -4,6 +4,8 @@ ActiveAdmin.register Setting do
                 :csv_basename, :mail_option, :default_email, :default_person,
                 :email_subject, :category_letters
 
+  menu :priority => 7
+
   actions :show, :edit, :update
 
   controller do

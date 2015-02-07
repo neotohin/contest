@@ -1,6 +1,8 @@
-ActiveAdmin.register Document, :as => "Article" do
+ActiveAdmin.register Article, :as => "Article" do
 
   permit_params :list, :of, :attributes, :on, :model, :title, :link, :index
+
+  menu :priority => 5
 
   scope("All") {|scope| scope.all}
   scope("Articles Assigned") { |scope| scope.where("JUDGE_ID IS NOT NULL") }
@@ -15,17 +17,17 @@ ActiveAdmin.register Document, :as => "Article" do
   end
 
   filter :judge
-  filter :area, :label => "Category"
+  filter :category
   filter :title, :label => "Article"
 
   index do
     column :code do |article|
-      link_to article.code, admin_category_path(article.area_id)
+      link_to article.code, admin_category_path(article.category_id)
     end
 
-    column :category, sortable: 'areas.name' do |article|
-      category_id = article.area_id
-      link_to Area.find(category_id).name, admin_category_path(category_id)
+    column :category, sortable: 'categories.name' do |article|
+      category_id = article.category_id
+      link_to Category.find(category_id).name, admin_category_path(category_id)
     end
 
     column :article do |article|
@@ -42,7 +44,7 @@ ActiveAdmin.register Document, :as => "Article" do
 
   controller do
     def scoped_collection
-      super.includes :area, :judge # prevents N+1 queries to your database
+      super.includes :category, :judge # prevents N+1 queries to your database
     end
   end
 
@@ -51,8 +53,8 @@ ActiveAdmin.register Document, :as => "Article" do
       row :code
 
       row :category do |article|
-        category_id = article.area_id
-        c = Area.find(category_id) if category_id
+        category_id = article.category_id
+        c = Category.find(category_id) if category_id
         link_to c.name, admin_category_path(category_id) if c
       end
 

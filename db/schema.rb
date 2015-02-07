@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150131042418) do
+ActiveRecord::Schema.define(version: 20150207010658) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -46,29 +46,31 @@ ActiveRecord::Schema.define(version: 20150131042418) do
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
 
-  create_table "areas", force: :cascade do |t|
-    t.integer  "index"
-    t.string   "name"
-    t.string   "code"
-    t.string   "instructions"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-  end
-
-  add_index "areas", ["code"], name: "index_areas_on_code"
-
-  create_table "documents", force: :cascade do |t|
+  create_table "articles", force: :cascade do |t|
     t.integer  "judge_id"
-    t.integer  "area_id"
+    t.integer  "category_id"
     t.integer  "index"
     t.string   "title"
     t.string   "link"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
-  add_index "documents", ["area_id"], name: "index_documents_on_area_id"
-  add_index "documents", ["judge_id"], name: "index_documents_on_judge_id"
+  add_index "articles", ["category_id"], name: "index_articles_on_category_id"
+  add_index "articles", ["judge_id"], name: "index_articles_on_judge_id"
+
+  create_table "categories", force: :cascade do |t|
+    t.integer  "index"
+    t.string   "name"
+    t.string   "code"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.integer  "supercategory_id"
+    t.string   "instructions"
+  end
+
+  add_index "categories", ["code"], name: "index_categories_on_code"
+  add_index "categories", ["supercategory_id"], name: "index_categories_on_supercategory_id"
 
   create_table "judges", force: :cascade do |t|
     t.integer  "index"
@@ -83,14 +85,14 @@ ActiveRecord::Schema.define(version: 20150131042418) do
   add_index "judges", ["name"], name: "index_judges_on_name"
 
   create_table "mappings", force: :cascade do |t|
-    t.integer  "area_id"
+    t.integer  "category_id"
     t.integer  "judge_id"
     t.integer  "weight"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
-  add_index "mappings", ["area_id"], name: "index_mappings_on_area_id"
+  add_index "mappings", ["category_id"], name: "index_mappings_on_category_id"
   add_index "mappings", ["judge_id"], name: "index_mappings_on_judge_id"
 
   create_table "settings", force: :cascade do |t|
@@ -103,6 +105,14 @@ ActiveRecord::Schema.define(version: 20150131042418) do
     t.string   "category_letters"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+  end
+
+  create_table "supercategories", force: :cascade do |t|
+    t.string   "display_name"
+    t.string   "instructions"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "letter_code"
   end
 
 end

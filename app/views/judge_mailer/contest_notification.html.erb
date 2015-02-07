@@ -57,19 +57,19 @@
 
 <div>
   <p>Your entries by category are:</p>
-  <% @details.each do |major_code, documents| %>
+  <% @details.each do |major_code, articles| %>
       <p>
         <strong><%= get_major(major_code) %></strong>
       </p>
 
       <p>
-        <%= Area.find(documents.first.area_id).instructions %>
+        <%= get_instructions(major_code) %>
       </p>
 
-      <% documents.group_by(&:area_id).each do |area_id, docs| %>
+      <% articles.group_by(&:category_id).each do |category_id, docs| %>
           <div style="margin-left: 25px;">
             <p>
-              <strong><%= Area.find(area_id).name %></strong>
+              <strong><%= Category.find(category_id).name %></strong>
             </p>
             <% docs.each do |doc| %>
                 <% if doc.code.start_with?("SI") %>

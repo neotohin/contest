@@ -30,7 +30,7 @@ ActiveAdmin.register_page "Dashboard" do
 end
 
 def number_articles
-  Document .count
+  Article .count
 end
 
 def number_judges
@@ -46,5 +46,5 @@ def mailings_not_sent
 end
 
 def number_unassigned_articles
-  Document.where("JUDGE_ID IS NULL").count
+  Article.where("JUDGE_ID IS NULL").count
 end

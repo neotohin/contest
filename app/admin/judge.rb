@@ -2,6 +2,8 @@ ActiveAdmin.register Judge do
 
   permit_params :list, :of, :attributes, :on, :model, :name, :email, :index, :sent_mail, :sent_mail_time
 
+  menu :priority => 6
+
   scope("All") {|scope| scope.all}
   scope("Mail Sent") { |scope| scope.where(:sent_mail => true) }
   scope("Mail Not Sent") { |scope| scope.where(:sent_mail => nil) }
@@ -14,8 +16,8 @@ ActiveAdmin.register Judge do
     end
   end
 
-  filter :documents, :label => "Articles"
-  filter :areas, :label => "Categories"
+  filter :articles
+  filter :categories
   filter :name
   filter :email
   filter :sent_mail
@@ -32,11 +34,11 @@ ActiveAdmin.register Judge do
     column :sent_mail_time
 
     column "# Categories" do |judge|
-      judge.areas.count
+      judge.categories.count
     end
 
     column "# Articles" do |judge|
-      judge.documents.count
+      judge.articles.count
     end
 
     actions :defaults => false do |judge|
@@ -76,25 +78,25 @@ ActiveAdmin.register Judge do
       row :sent_mail_time
 
       row "# Articles" do
-        judge.documents.count
+        judge.articles.count
       end
 
       row "# Categories" do
-        judge.areas.count
+        judge.categories.count
       end
     end
 
     panel "Categories for this Judge" do
-      table_for(judge.areas) do |category|
-        category.column("Code")   { |item| item.code }
-        category.column("Name")   { |item| link_to item.name, admin_category_path(item.id) }
-        category.column("Number of Articles")   { |item| item.documents.where(:judge => judge).count }
+      table_for(judge.categories) do |category|
+        category.column("Code")  { |item| item.code }
+        category.column("Name")  { |item| link_to item.name, admin_category_path(item.id) }
+        category.column("Number of Articles")   { |item| item.articles.where(:judge => judge).count }
         category.column("Weight") { |item| item.mappings.where(:judge => judge).first.weight }
       end
     end
 
     panel "Articles for this Judge" do
-      table_for(judge.documents) do |document|
+      table_for(judge.articles) do |document|
         document.column("Code") { |item| item.code }
         document.column("Title") { |item| link_to item.pretty_title, admin_article_path(item.id) }
       end

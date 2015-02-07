@@ -10,8 +10,16 @@ Setting.new(
     :default_email    => "bashki.edible@gmail.com",
     :default_person   => "Lara Bashkoff",
     :email_subject    => "Your Articles for Review",
-    :category_letters => "SI-F-S-R-I"
+    :category_letters => Supercategory::SUPER_CATEGORIES.keys.join("-")
 ).save
+
+# Populate the supercategories table
+
+Supercategory.destroy_all
+Supercategory::SUPER_CATEGORIES.each do |letter_code, name|
+  s = Supercategory.new(:letter_code => letter_code, :display_name => name)
+  s.save
+end
 
 # First extract the judges from the second and third rows of the csv file
 
@@ -30,17 +38,18 @@ judge_names.each_with_index do |judge, index|
   Judge.new(:index => index, :name => judge, :email => judge_emails[index]).save
 end
 
-# Extract the categories (areas) from the csv file
+# Extract the categories from the csv file
 
-# CATEGORY_LETTERS = "(#{Setting.first.category_prefix})"
-CATEGORY_LETTERS = "(SI|F|S|R|I)"
+CATEGORY_LETTERS = "(#{Supercategory::SUPER_CATEGORIES.keys.join("|")})"
 
-Area.destroy_all
+Category.destroy_all
 
 raw.select do |raw_row|
   /^#{CATEGORY_LETTERS}\.\d$/.match(raw_row.first)
 end.each_with_index do |row, index|
-  a = Area.new(:name => row[1], :code => row[0], :index => index)
+  a = Category.new(:name => row[1], :code => row[0], :index => index)
+  category_letter = /\A#{CATEGORY_LETTERS}\./.match(a.code)[1]
+  a.supercategory = Supercategory.where(:letter_code => category_letter).first
   a.save
 
   3.times { row.shift }
@@ -61,35 +70,35 @@ objects = s3.buckets["edible-2015-contest"].objects
 objects.each_with_index do |obj, index|
   next unless m = /^#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s+--/.match(obj.key)
   puts obj.key
-  d = Document.new({
+  d = Article.new({
                        :index => index.to_s,
                        :title => obj.key.strip,
                        :link  => obj.url_for(:read, :expires => "2015-03-23")
                    })
-  d.area_id = Area.where(:code => m[1]).first.id
+  d.category_id = Category.where(:code => m[1]).first.id
   d.save
 end
 
 # Now assign articles to each judge for every category
 
-Area.all.each do |area|
-  judges_pool = area.judges.map do |judge|
-    [judge] * judge.mappings.where(:area => area).first.weight
+Category.all.each do |category|
+  judges_pool = category.judges.map do |judge|
+    [judge] * judge.mappings.where(:category => category).first.weight
   end.flatten
 
   judges_pool.shuffle!
-  documents = area.documents.shuffle
-  puts "IN CATEGORY #{area.name} -------------------------------------------------------------"
+  articles = category.articles.shuffle
+  puts "IN CATEGORY #{category.name} -------------------------------------------------------------"
   puts "                         JUDGES (#{judges_pool.count}): #{judges_pool.map(&:name).join(", ")}"
-  puts "                         DOCUMENTS (#{documents.count}): #{documents.map(&:index)}"
+  puts "                         DOCUMENTS (#{articles.count}): #{articles.map(&:index)}"
   judges_pool.each_with_index do |judge, judge_index|
   puts "            ASSIGNING JUDGE #{judge.name} ARTICLES ..................."
 
-    judge_documents = documents.select do |d|
-      documents.index(d) % judges_pool.length == judge_index
+    judge_articles = articles.select do |d|
+      articles.index(d) % judges_pool.length == judge_index
     end
-    puts "            ARTICLES #{judge_documents.map(&:index)}"
-    judge.documents << judge_documents
+    puts "            ARTICLES #{judge_articles.map(&:index)}"
+    judge.articles << judge_articles
     judge.save
   end
 
