@@ -92,6 +92,15 @@ ActiveAdmin.register Judge do
     def vote
       set_judge
       @details = @judge.articles.group_by(&:category)
+      @m = {}
+      @details.each do |category, articles|
+        m = category.mappings.where(:judge_id => @judge.id).first
+        @m.merge!({ category.name  => {} })
+        @m[category.name].merge!({ :first_choice => m.first_choice })
+        @m[category.name].merge!({ :first_choice_comment => m.first_choice_comment })
+        @m[category.name].merge!({ :second_choice => m.second_choice })
+        @m[category.name].merge!({ :second_choice_comment => m.second_choice_comment })
+      end
     end
 
     def record_vote
@@ -154,7 +163,7 @@ ActiveAdmin.register Judge do
     end
 
     panel "Categories for this Judge" do
-      table_for(judge.categories) do |category|
+      table_for(judge.categories.sort_by(&:code)) do |category|
         category.column("Code") { |item| item.code }
         category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
         category.column("Number of Articles") { |item| item.articles.where(:judge => judge).count }

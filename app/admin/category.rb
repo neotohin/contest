@@ -65,7 +65,7 @@ ActiveAdmin.register Category do
     end
 
     panel "Judges for this Category" do
-      table_for(category.judges) do |judge|
+      table_for(category.judges.sort_by(&:name)) do |judge|
         judge.column("Judge") { |item| link_to item.name, admin_judge_path(item.id) }
         judge.column("Number of Articles") { |item| item.articles.where(:category => category).count }
         judge.column("Weight") { |item| item.mappings.where(:category => category).first.weight }

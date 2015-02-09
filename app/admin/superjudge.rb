@@ -87,7 +87,7 @@ ActiveAdmin.register Superjudge do
     end
 
     panel "Categories for this Superjudge" do
-      table_for(superjudge.categories) do |category|
+      table_for(superjudge.categories.sort_by(&:code)) do |category|
         category.column("Code")  { |item| item.code }
         category.column("Name")  { |item| link_to item.name, admin_category_path(item.id) }
         category.column("Number of Articles")   { |item| item.articles.where(:category => category).count }

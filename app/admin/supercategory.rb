@@ -43,7 +43,7 @@ ActiveAdmin.register Supercategory do
     end
 
     panel "Categories For This Supercategory" do
-      table_for(supercategory.categories) do |category|
+      table_for(supercategory.categories.sort_by(&:code)) do |category|
         category.column("Code") { |item| item.code }
         category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
         category.column("Number of Articles") { |item| item.articles.count }
