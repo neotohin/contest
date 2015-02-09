@@ -1,0 +1,51 @@
+<h2><%= "#{@judge.name} - Enter Favorites" %></h2>
+
+<%= form_tag record_vote_admin_judge_path(@judge.id), :class => "formtastic judge", :novalidate => "novalidate", :accept_charset => "UTF-8" do %>
+    <fieldset class="inputs">
+      <legend><span>Details</span></legend>
+      <ol>
+        <% @details.each do |category, articles| %>
+            <hr/>
+            <h4>
+              <strong><%= "Code: #{category.code} - Category: #{category.name}" %></strong>
+            </h4>
+
+            <li>
+              <%= label_tag "first_choice[#{category.id}]", "First choice:" %>
+              <%= select_tag "first_choice[#{category.id}]", options_from_collection_for_select(articles, :id, :pretty_title) %>
+            </li>
+            <br/>
+
+            <li>
+              <%= label_tag "first_choice_comment[#{category.id}]", "Comment:" %>
+              <%= text_field_tag "first_choice_comment[#{category.id}]" %>
+            </li>
+            <br/>
+            <% if category.report_choices == 2 %>
+                <br/>
+
+                <li>
+                  <%= label_tag "second_choice[#{category.id}]", "Second choice:" %>
+                  <%= select_tag "second_choice[#{category.id}]", options_from_collection_for_select(articles, :id, :pretty_title) %>
+                </li>
+                <br/>
+
+                <li>
+                  <%= label_tag "second_choice_comment[#{category.id}]", "Comment:" %>
+                  <%= text_field_tag "second_choice_comment[#{category.id}]" %>
+                </li>
+            <% end %>
+            <br/><br/>
+        <% end %>
+      </ol>
+      <hr/>
+    </fieldset>
+    <fieldset class="actions">
+      <p>All previous votes for this judge will be overwritten by these selections</p>
+      <br />
+      <ol>
+        <li><%= submit_tag :submit %></li>
+        <li><%= submit_tag :cancel, :style => "background: #FBFBFB; color: #5E6469;" %></li>
+      </ol>
+    </fieldset>
+<% end %>

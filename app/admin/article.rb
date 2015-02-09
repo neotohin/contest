@@ -1,12 +1,16 @@
-ActiveAdmin.register Article, :as => "Article" do
+ActiveAdmin.register Article do
 
   permit_params :list, :of, :attributes, :on, :model, :title, :link, :index
 
   menu :priority => 5
 
-  scope("All") {|scope| scope.all}
+  scope("All") { |scope| scope.all }
   scope("Articles Assigned") { |scope| scope.where("JUDGE_ID IS NOT NULL") }
   scope("Articles Not Assigned") { |scope| scope.where("JUDGE_ID IS NULL") }
+
+  scope("Favorite") do |scope|
+    Article.where(:id => scope.select { |article| article.a_first_choice_article? || article.a_second_choice_article? }.map(&:id))
+  end
 
   sidebar :status, :priority => 0 do
     if Setting.first.mail_option
@@ -40,6 +44,16 @@ ActiveAdmin.register Article, :as => "Article" do
       link_to judge.name, admin_judge_path(judge.id) if judge
     end
 
+    column :status do |article|
+      if article.a_first_choice_article?
+        status_tag "First Choice", :style => "background: blue"
+      elsif article.a_second_choice_article?
+        status_tag "Second Choice", :style => "background: red"
+      else
+        ""
+      end
+    end
+
   end
 
   controller do
@@ -49,12 +63,23 @@ ActiveAdmin.register Article, :as => "Article" do
   end
 
   show :title => :pretty_title do
+
     attributes_table do
+      row :status do |article|
+        if article.a_first_choice_article?
+          status_tag "First Choice", :style => "background: blue"
+        elsif article.a_second_choice_article?
+          status_tag "Second Choice", :style => "background: red"
+        else
+          status_tag "Not Chosen"
+        end
+      end
+
       row :code
 
       row :category do |article|
         category_id = article.category_id
-        c = Category.find(category_id) if category_id
+        c           = Category.find(category_id) if category_id
         link_to c.name, admin_category_path(category_id) if c
       end
 
@@ -65,12 +90,12 @@ ActiveAdmin.register Article, :as => "Article" do
       end
 
       row :link do |article|
-        link_to article.link, article.link , :target => "_blank"
+        link_to article.link, article.link, :target => "_blank"
       end
 
       row :judge do |article|
         judge_id = article.judge_id
-        j = Judge.find(judge_id) if judge_id
+        j        = Judge.find(judge_id) if judge_id
         link_to j.name, admin_judge_path(judge_id) if j
       end
     end
@@ -78,11 +103,10 @@ ActiveAdmin.register Article, :as => "Article" do
 
   form do |f|
     inputs 'Details' do
-      input :title
-      input :link
-      input :id
+      f.input :title
+      f.input :link
     end
-    actions
+    f.actions
   end
 
 end

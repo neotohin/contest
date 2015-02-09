@@ -1,0 +1,94 @@
+<p>Dear <%= get_first_name(@superjudge.name) %>,</p>
+
+<div>
+  <p>
+    Thank you for agreeing to judge the 2015 EDDY Awards! We’re thrilled
+    you’ll be
+    helping recognize the wonderful work produced by independent publishers who
+    make up Edible Communities.
+  </p>
+
+  <p>
+    Below are the links to entries we’d like for you to view and judge. Please
+    reply to this email by (lucky) Friday, February 13 with your favorite
+    selection from each category with a sentence or two that describes what you
+    especially like about the piece. We’ll also need you to select a runner up
+    in
+    each category and provide a soundbite as well. While the list of links may
+    look long, many of the entries require just a few minutes. Feature, Story
+    and
+    Special Issue categories involve more reading while Recipe and Imagery
+    categories are quick views of visuals.
+  </p>
+
+  <p>
+    Depending on your browser, each link will either open up a new window or
+    tab
+    or potentially even download the PDF or jpeg to your computer. If you
+    experience any problems viewing your entries, please email
+    <a href="mailto:eddyawards@ediblemedia.com">eddyawards@ediblemedia.com</a> to let us know.
+  </p>
+
+  <p>
+    Once again, thanks so much for being a crucial part of the EDDY Awards.
+    Please
+    quickly reply to this email so we know you received it.
+  </p>
+
+  <p>
+    My best,<br/>Lara Bashkoff
+  </p>
+
+  <p>
+    Chief Digital Officer, Edible Media<br/>
+    <a href="mailto:lara@ediblemedia.com">lara@ediblemedia.com</a>
+  </p>
+
+  <p>
+    P.S. Your selections will help determine 5 finalists in each category,
+    which
+    will be posted to <a href="ediblefeast.com">ediblefeast.com</a> for Readers’ Choice voting on Monday,
+    February 22. Your vote will also inform Critics’ Choice winners. All winners
+    will be revealed online on Friday, March 20.
+  </p>
+
+  <hr/>
+</div>
+
+<div>
+  <p>Your entries by category are:</p>
+  <% @details.each do |major_code, article_infos| %>
+      <p>
+        <strong><%= get_major(major_code) %></strong>
+      </p>
+
+      <p>
+        <%= get_instructions(major_code) %>
+      </p>
+
+      <% article_infos.group_by{ |i| i[:article].category_id }.each do |category_id, doc_infos| %>
+          <div style="margin-left: 25px;">
+            <p>
+              <strong><%= Category.find(category_id).name %></strong>
+            </p>
+            <% doc_infos.sort_by { |d| d[:article].code }.each do |doc_info| %>
+                <% if doc_info[:article].code.start_with?("SI") %>
+                    <li>
+                      <%= doc_info[:article].pretty_title %>
+                    </li>
+                <% else %>
+                    <li>
+                      <a href="<%= doc_info[:article].link %>"><%= doc_info[:article].pretty_title %></a>
+                    </li>
+                <% end %>
+                <p>Comment: <%= doc_info[:comment] %></p>
+            <% end %>
+          </div>
+      <% end %>
+      <br/>
+  <% end %>
+</div>
+<br/>
+<hr/>
+<br/>
+

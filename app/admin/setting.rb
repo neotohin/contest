@@ -4,7 +4,7 @@ ActiveAdmin.register Setting do
                 :csv_basename, :mail_option, :default_email, :default_person,
                 :email_subject, :category_letters
 
-  menu :priority => 7
+  menu :priority => 8
 
   actions :show, :edit, :update
 
@@ -22,7 +22,8 @@ ActiveAdmin.register Setting do
       row :default_email
       row :email_subject
       row :mail_option do |setting|
-        status_tag setting.mail_option
+        status_tag :mailings_activated, :style => "color: red" if setting.mail_option
+        status_tag :mailings_not_activated, :style => "color: black" unless setting.mail_option
       end
       row :category_letters
     end

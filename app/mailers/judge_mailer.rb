@@ -13,6 +13,15 @@ class JudgeMailer < ApplicationMailer
     mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)
   end
 
+  def voting_notification(to_name, to_email, superjudge)
+    @superjudge = superjudge
+    @details = superjudge.all_articles.group_by do |article_info|
+      /([A-Z]{1,2})/.match(article_info[:article].code)[1]
+    end
+
+    mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)
+  end
+
   helper_method :get_major, :get_instructions, :get_first_name
 
   def get_major(code)

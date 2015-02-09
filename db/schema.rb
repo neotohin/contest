@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150207010658) do
+ActiveRecord::Schema.define(version: 20150207195029) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -66,11 +66,13 @@ ActiveRecord::Schema.define(version: 20150207010658) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "supercategory_id"
-    t.string   "instructions"
+    t.integer  "superjudge_id"
+    t.integer  "report_choices"
   end
 
   add_index "categories", ["code"], name: "index_categories_on_code"
   add_index "categories", ["supercategory_id"], name: "index_categories_on_supercategory_id"
+  add_index "categories", ["superjudge_id"], name: "index_categories_on_superjudge_id"
 
   create_table "judges", force: :cascade do |t|
     t.integer  "index"
@@ -88,12 +90,18 @@ ActiveRecord::Schema.define(version: 20150207010658) do
     t.integer  "category_id"
     t.integer  "judge_id"
     t.integer  "weight"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.integer  "first_choice"
+    t.integer  "second_choice"
+    t.string   "first_choice_comment"
+    t.string   "second_choice_comment"
   end
 
   add_index "mappings", ["category_id"], name: "index_mappings_on_category_id"
+  add_index "mappings", ["first_choice"], name: "index_mappings_on_first_choice"
   add_index "mappings", ["judge_id"], name: "index_mappings_on_judge_id"
+  add_index "mappings", ["second_choice"], name: "index_mappings_on_second_choice"
 
   create_table "settings", force: :cascade do |t|
     t.string   "articles_home"
@@ -113,6 +121,15 @@ ActiveRecord::Schema.define(version: 20150207010658) do
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
     t.string   "letter_code"
+  end
+
+  create_table "superjudges", force: :cascade do |t|
+    t.string   "name"
+    t.string   "email"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.boolean  "sent_mail"
+    t.datetime "sent_mail_time"
   end
 
 end

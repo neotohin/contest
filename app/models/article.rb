@@ -2,6 +2,8 @@ class Article < ActiveRecord::Base
 	belongs_to :judge
   belongs_to :category
 
+  validates :title, :presence => true
+
   # CATEGORY_LETTERS = "(#{Setting.first.category_prefix})"
   CATEGORY_LETTERS = "(SI|F|S|R|I)"
   REGEX     = "^#\\d+e?\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
@@ -24,6 +26,24 @@ class Article < ActiveRecord::Base
 
   def category
     Category.find(self.category_id)
+  end
+
+  def a_first_choice_article?
+    Mapping.where(:first_choice => self.id).present?
+  end
+
+  def a_second_choice_article?
+    Mapping.where(:second_choice => self.id).present?
+  end
+
+  def is_first_choice_article?(judge_id, category_id)
+    m = Mapping.where(:judge_id => judge_id, :category_id => category_id).first
+    self.id == m.first_choice
+  end
+
+  def is_second_choice_article?(judge_id, category_id)
+    m = Mapping.where(:judge_id => judge_id, :category_id => category_id).first
+    self.id == m.second_choice
   end
 
   private

@@ -22,8 +22,15 @@ ActiveAdmin.register_page "Dashboard" do
           li "Total number of mailings sent: #{mailings_sent}"
           li "Total number of mailings not sent: #{mailings_not_sent}"
         end
+        div  "Voting Information:"
+        div do
+          li "Total number of first choice articles: #{number_first_choice_articles}"
+          li "Total number of second choice articles: #{number_second_choice_articles}"
+          li "Total number of judges who have voted: #{number_judges_voted}"
+          li "Total number of judges who have not voted: #{number_judges_not_voted}"
+        end
       end
-    end # content
+    end
 
   end
 
@@ -47,4 +54,26 @@ end
 
 def number_unassigned_articles
   Article.where("JUDGE_ID IS NULL").count
+end
+
+def number_first_choice_articles
+  Mapping.where("FIRST_CHOICE IS NOT NULL").count
+end
+
+def number_second_choice_articles
+  Mapping.where("SECOND_CHOICE IS NOT NULL").count do |mapping|
+    mapping.category.report_choices == 2
+  end
+end
+
+def number_judges_voted
+  Judge.all.map(&:mappings).count do |mapping|
+    mapping.map.all?(&:first_choice)
+  end
+end
+
+def number_judges_not_voted
+  Judge.all.map(&:mappings).count do |mapping|
+    !mapping.map.all?(&:first_choice)
+  end
 end

@@ -10,4 +10,14 @@ class Supercategory < ActiveRecord::Base
   }
 
   has_many :categories
+
+  codes = SUPER_CATEGORIES.keys
+
+  validates :display_name, :presence => true
+  validates :letter_code,
+            :presence => true,
+            :format => {
+                :with => /\A(#{codes.join("|")})\z/,
+                :message => "only valid codes are #{codes.join(", ")}"
+            }
 end

@@ -47,6 +47,9 @@ ActiveAdmin.register Supercategory do
         category.column("Code") { |item| item.code }
         category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
         category.column("Number of Articles") { |item| item.articles.count }
+        category.column("Superjudge") do |item|
+          link_to item.superjudge.name, admin_superjudge_path(item.superjudge.id) if item.superjudge
+        end
       end
     end
   end
