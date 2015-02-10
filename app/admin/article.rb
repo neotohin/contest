@@ -1,6 +1,6 @@
 ActiveAdmin.register Article do
 
-  permit_params :list, :of, :attributes, :on, :model, :title, :link, :index
+  permit_params :list, :of, :attributes, :on, :model, :title, :link, :index, :judge_id
 
   menu :priority => 5
 
@@ -102,9 +102,16 @@ ActiveAdmin.register Article do
   end
 
   form do |f|
-    inputs 'Details' do
+    inputs "Details for this article in category #{resource.category.name}" do
       f.input :title
       f.input :link
+    end
+
+    inputs 'Use this section to reassign this article to another judge' do
+       if resource.a_first_choice_article? || resource.a_second_choice_article?
+         li "WARNING: This article has already been selected as a first or second choice favorite by judge #{resource.judge.name}. Be sure to resubmit votes for this judge.", :style => "color: red;"
+       end
+      f.input :judge, :collection => resource.category.mappings.map(&:judge).map { |j| [j.name, j.id] }, :include_blank => false
     end
     f.actions
   end
