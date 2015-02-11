@@ -1,6 +1,7 @@
 ActiveAdmin.register Judge do
 
-  permit_params :list, :of, :attributes, :on, :model, :name, :email, :index, :sent_mail, :sent_mail_time, :submit
+  permit_params :list, :of, :attributes, :on, :model, :name, :email, :index,
+                :sent_mail, :sent_mail_time, :new_category_id, :submit
 
   menu :priority => 7
 
@@ -76,6 +77,28 @@ ActiveAdmin.register Judge do
 
   end
 
+  member_action :add_category, :method => [:get, :post] do
+    @judge = resource
+    if request.post?
+      if params[:commit] == "cancel"
+        redirect_to admin_judge_path(@judge)
+        return
+      end
+      m             = Mapping.new
+      m.judge_id    = @judge.id
+      m.category_id = params[:new_category_id]
+      if m.save
+        redirect_to admin_judge_path(@judge)
+        return
+      else
+        flash[:error] = "New category not saved"
+        redirect_to add_category_admin_judge_path(@judge)
+      end
+    else
+      @categories = (Category.all.to_a - @judge.categories.to_a).sort_by(&:code)
+    end
+  end
+
   controller do
     def send_mail
       set_judge
@@ -138,8 +161,11 @@ ActiveAdmin.register Judge do
     end
   end
 
-  show do
+  action_item :add_category, :only => :show do
+    link_to "Add Category", add_category_admin_judge_path(resource)
+  end
 
+  show do
     attributes_table do
       row :name
       row :email

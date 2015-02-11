@@ -1,0 +1,17 @@
+<%= form_tag add_category_admin_judge_path(@judge.id), :class => "formtastic judge", :novalidate => "novalidate", :accept_charset => "UTF-8" do %>
+    <fieldset class="inputs">
+      <legend><span>Select a new category for judge <%= @judge.name %></span></legend>
+      <ol>
+            <li>
+              <%= label_tag "new_category_id", "New category:" %>
+              <%= select_tag "new_category_id", options_for_select(Hash[@categories.map {|c| ["#{c.code} - #{c.name}", c.id] }] ) %>
+            </li>
+      </ol>
+    </fieldset>
+    <fieldset class="actions">
+      <ol>
+        <li><%= submit_tag :submit %></li>
+        <li><%= submit_tag :cancel, :style => "background: #FBFBFB; color: #5E6469;" %></li>
+      </ol>
+    </fieldset>
+<% end %>
