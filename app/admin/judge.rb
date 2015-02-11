@@ -64,13 +64,13 @@ ActiveAdmin.register Judge do
   end
 
   member_action :send_mail, :method => :get do
-    resource.send_mail!
-    redirect_to resource_path, notice: "Mail Sent!"
+    @judge = resource
+    @judge.send_mail!
   end
 
   member_action :vote, :method => :get do
     @judge = resource
-    redirect_to vote_admin_judge_path(@judge)
+    @judge.vote!
   end
 
   member_action :record_vote, :method => :post do
@@ -102,18 +102,31 @@ ActiveAdmin.register Judge do
   controller do
     def send_mail
       set_judge
-      Timeout::timeout(10) do
-        JudgeMailer.contest_notification(*set_mail_to_people, @judge).deliver_now
+      if @judge.articles.count < 1
+        flash[:error] = "Nothing to mail for #{@judge.name}"
+      else
+        Timeout::timeout(10) do
+          JudgeMailer.contest_notification(*set_mail_to_people, @judge).deliver_now
+        end
+        if Setting.first.mail_option
+          @judge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
+          @judge.save
+        end
+        flash[:notice] = "Mail Sent Successfully!"
       end
-      if Setting.first.mail_option
-        @judge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
-        @judge.save
-      end
+    rescue
+      flash[:error] = "Mail NOT Sent Successfully!"
+    ensure
       redirect_to admin_judges_path
     end
 
     def vote
       set_judge
+      if @judge.articles.count < 1
+        flash[:error] = "#{@judge.name} has no articles to vote for"
+        redirect_to admin_judges_path
+        return
+      end
       @details = @judge.articles.group_by(&:category)
       @m = {}
       @details.each do |category, articles|
@@ -237,5 +250,3 @@ def set_mail_to_people
     [Setting.first.default_person, Setting.first.default_email]
   end
 end
-
-
