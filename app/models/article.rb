@@ -28,12 +28,21 @@ class Article < ActiveRecord::Base
     Category.find(self.category_id)
   end
 
+  def any_choice_article?
+    h = [self.id] * 3
+    Mapping.where("first_choice = ? OR second_choice = ? OR third_choice = ?", *h).first
+  end
+
   def a_first_choice_article?
     Mapping.where(:first_choice => self.id).present?
   end
 
   def a_second_choice_article?
     Mapping.where(:second_choice => self.id).present?
+  end
+
+  def a_third_choice_article?
+    Mapping.where(:third_choice => self.id).present?
   end
 
   def is_first_choice_article?(judge_id, category_id)
@@ -44,6 +53,11 @@ class Article < ActiveRecord::Base
   def is_second_choice_article?(judge_id, category_id)
     m = Mapping.where(:judge_id => judge_id, :category_id => category_id).first
     self.id == m.second_choice
+  end
+
+  def is_third_choice_article?(judge_id, category_id)
+    m = Mapping.where(:judge_id => judge_id, :category_id => category_id).first
+    self.id == m.third_choice
   end
 
   private

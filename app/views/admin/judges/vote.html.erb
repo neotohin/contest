@@ -21,7 +21,7 @@
               <%= text_field_tag "first_choice_comment[#{category.id}]", @m[category.name][:first_choice_comment] %>
             </li>
             <br/>
-            <% if category.report_choices == 2 %>
+            <% if category.report_choices >= 2 %>
                 <br/>
 
                 <li>
@@ -33,6 +33,21 @@
                 <li>
                   <%= label_tag "second_choice_comment[#{category.id}]", "Comment:" %>
                   <%= text_field_tag "second_choice_comment[#{category.id}]", @m[category.name][:second_choice_comment] %>
+                </li>
+            <% end %>
+            <br/>
+            <% if category.report_choices >= 3 %>
+                <br/>
+
+                <li>
+                  <%= label_tag "third_choice[#{category.id}]", "Third choice:" %>
+                  <%= select_tag "third_choice[#{category.id}]", options_from_collection_for_select(articles, :id, :pretty_title, @m[category.name][:third_choice]) %>
+                </li>
+                <br/>
+
+                <li>
+                  <%= label_tag "third_choice_comment[#{category.id}]", "Comment:" %>
+                  <%= text_field_tag "third_choice_comment[#{category.id}]", @m[category.name][:third_choice_comment] %>
                 </li>
             <% end %>
             <br/><br/>

@@ -1,3 +1,5 @@
+include ApplicationHelper
+
 ActiveAdmin.register Category do
 
   permit_params :list, :of, :attributes, :on, :model, :name, :code,
@@ -71,20 +73,20 @@ ActiveAdmin.register Category do
         judge.column("Weight") { |item| item.mappings.where(:category => category).first.weight }
       end
     end
-
     panel "Articles for this Category" do
       table_for(category.articles.sort_by(&:code)) do |document|
         document.column("Status") do |item|
-          if item.a_first_choice_article?
-            status_tag "First Choice", :style => "background: blue"
-          elsif item.a_second_choice_article?
-            status_tag "Second Choice", :style => "background: red"
-          else
-            ""
-          end
+          show_prize_level(item)
         end
         document.column("Code") { |item| item.code }
-        document.column("Title") { |item| link_to item.pretty_title, admin_article_path(item.id) }
+        document.column("Title") { |item|
+          div do
+              div link_to item.pretty_title, admin_article_path(item.id)
+              if (m = item.any_choice_article?)
+                div "Comment: #{m.comment_for(item.id)}", :style => "width: 600px;"
+              end
+          end
+        }
       end
     end
 
@@ -96,21 +98,9 @@ ActiveAdmin.register Category do
       f.input :superjudge
       f.input :name
       f.input :code
-      f.input :report_choices, :as => :select, :collection => [1, 2]
+      f.input :report_choices, :as => :select, :collection => [1, 2, 3]
     end
     f.actions
   end
 
-end
-
-private
-
-def report_choice_tags(choices)
-  if choices == 1
-    status_tag :use_first_choice
-  elsif choices == 2
-    status_tag :use_first_and_second_choices
-  else
-    status_tag "Invalid"
-  end
 end

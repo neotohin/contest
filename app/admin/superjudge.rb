@@ -72,7 +72,7 @@ ActiveAdmin.register Superjudge do
       row :email
 
       row :sent_mail do
-        status_tag(:sent_mail)
+        status_tag :sent_mail
       end
 
       row :sent_mail_time
@@ -91,23 +91,24 @@ ActiveAdmin.register Superjudge do
         category.column("Code")  { |item| item.code }
         category.column("Name")  { |item| link_to item.name, admin_category_path(item.id) }
         category.column("Number of Articles")   { |item| item.articles.where(:category => category).count }
+        category.column("Report Choices") { |item| report_choice_tags(item.report_choices) }
       end
     end
 
-    panel "Articles for this Superjudge" do
+    panel "Articles Under Consideration for this Superjudge" do
       table_for(superjudge.all_articles.sort_by { |a| a[:article].code}) do |article_info|
         article_info.column("Status") do |item|
-          if item[:article].a_first_choice_article?
-            status_tag "First Choice", :style => "background: blue"
-          elsif item[:article].a_second_choice_article?
-            status_tag "Second Choice", :style => "background: red"
-          else
-            ""
-          end
+          show_prize_level(item[:article])
         end
         article_info.column("Code") { |item| item[:article].code }
-        article_info.column("Title") { |item| link_to item[:article].pretty_title, admin_article_path(item[:article].id)  }
-        article_info.column("Comment") { |item| item[:comment] }
+        article_info.column("Title") { |item|
+          div do
+            div link_to item[:article].pretty_title, admin_article_path(item[:article].id)
+            if (m = item[:article].any_choice_article?)
+              div "Comment: #{m.comment_for(item[:article].id)}", :style => "width: 600px;"
+            end
+          end
+        }
       end
     end
   end

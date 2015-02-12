@@ -8,7 +8,7 @@ ActiveAdmin.register Article do
   scope("Articles Assigned") { |scope| scope.where("JUDGE_ID IS NOT NULL") }
   scope("Articles Not Assigned") { |scope| scope.where("JUDGE_ID IS NULL") }
 
-  scope("Favorite") do |scope|
+  scope("Chosen") do |scope|
     Article.where(:id => scope.select { |article| article.a_first_choice_article? || article.a_second_choice_article? }.map(&:id))
   end
 
@@ -45,13 +45,7 @@ ActiveAdmin.register Article do
     end
 
     column :status do |article|
-      if article.a_first_choice_article?
-        status_tag "First Choice", :style => "background: blue"
-      elsif article.a_second_choice_article?
-        status_tag "Second Choice", :style => "background: red"
-      else
-        ""
-      end
+      show_prize_level(article)
     end
 
   end
@@ -66,13 +60,7 @@ ActiveAdmin.register Article do
 
     attributes_table do
       row :status do |article|
-        if article.a_first_choice_article?
-          status_tag "First Choice", :style => "background: blue"
-        elsif article.a_second_choice_article?
-          status_tag "Second Choice", :style => "background: red"
-        else
-          status_tag "Not Chosen"
-        end
+        show_prize_level(article)
       end
 
       row :code
@@ -97,6 +85,12 @@ ActiveAdmin.register Article do
         judge_id = article.judge_id
         j        = Judge.find(judge_id) if judge_id
         link_to j.name, admin_judge_path(judge_id) if j
+      end
+
+      if (m = resource.any_choice_article?)
+        row :comment do |article|
+          m.comment_for(article.id)
+        end
       end
     end
   end

@@ -127,6 +127,11 @@ ActiveAdmin.register Judge do
         redirect_to admin_judges_path
         return
       end
+      if @judge.categories.map(&:report_choices).any?(&:nil?)
+        flash[:error] = "#{@judge.name} has at least one category for which the 'REPORT_CHOICES' field has not been set"
+        redirect_to admin_judges_path
+        return
+      end
       @details = @judge.articles.group_by(&:category)
       @m = {}
       @details.each do |category, articles|
@@ -136,6 +141,8 @@ ActiveAdmin.register Judge do
         @m[category.name].merge!({ :first_choice_comment => m.first_choice_comment })
         @m[category.name].merge!({ :second_choice => m.second_choice })
         @m[category.name].merge!({ :second_choice_comment => m.second_choice_comment })
+        @m[category.name].merge!({ :third_choice => m.third_choice })
+        @m[category.name].merge!({ :third_choice_comment => m.third_choice_comment })
       end
     end
 
@@ -152,12 +159,19 @@ ActiveAdmin.register Judge do
         m                      = category.mappings.where(:judge_id => @judge.id).first
         m.first_choice         = params[:first_choice][category.id.to_s]
         m.first_choice_comment = (params[:first_choice_comment] || {})[category.id.to_s]
-        if category.report_choices == 2
+        if category.report_choices >= 2
           m.second_choice         = params[:second_choice][category.id.to_s]
           m.second_choice_comment = (params[:second_choice_comment] || {})[category.id.to_s]
         else
           m.second_choice         = nil
           m.second_choice_comment = ""
+        end
+        if category.report_choices >= 3
+          m.third_choice         = params[:third_choice][category.id.to_s]
+          m.third_choice_comment = (params[:third_choice_comment] || {})[category.id.to_s]
+        else
+          m.third_choice         = nil
+          m.third_choice_comment = ""
         end
 
         failure = true unless m.valid?
@@ -165,7 +179,7 @@ ActiveAdmin.register Judge do
       end
 
       if failure
-        flash[:error] = "First and second choices must not be the same for a given category"
+        flash[:error] = "Choices must not be the same for a given category"
         redirect_to vote_admin_judge_path(@judge)
         return
       end
@@ -184,7 +198,7 @@ ActiveAdmin.register Judge do
       row :email
 
       row :sent_mail do
-        status_tag(:sent_mail)
+        status_tag :sent_mail
       end
 
       row :sent_mail_time
@@ -206,6 +220,7 @@ ActiveAdmin.register Judge do
         category.column("Code") { |item| item.code }
         category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
         category.column("Number of Articles") { |item| item.articles.where(:judge => judge).count }
+        category.column("Report Choices") { |item| report_choice_tags(item.report_choices) }
         category.column("Weight") { |item| item.mappings.where(:judge => judge).first.weight }
       end
     end
@@ -213,16 +228,17 @@ ActiveAdmin.register Judge do
     panel "Articles for this Judge" do
       table_for(judge.articles.sort_by(&:code)) do |document|
         document.column("Status") do |item|
-          if item.is_first_choice_article?(judge.id, item.category.id)
-            status_tag "First Choice", :style => "background: blue"
-          elsif item.is_second_choice_article?(judge.id, item.category.id)
-            status_tag "Second Choice", :style => "background: red"
-          else
-            ""
-          end
+          show_prize_level(item)
         end
         document.column("Code") { |item| item.code }
-        document.column("Title") { |item| link_to item.pretty_title, admin_article_path(item.id) }
+        document.column("Title") { |item|
+          div do
+            div link_to item.pretty_title, admin_article_path(item.id)
+            if (m = item.any_choice_article?)
+              div "Comment: #{m.comment_for(item.id)}", :style => "width: 600px;"
+            end
+          end
+        }
       end
     end
   end

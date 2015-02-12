@@ -17,7 +17,7 @@ class Category < ActiveRecord::Base
   validates :report_choices,
             :allow_blank => true,
             :inclusion => {
-                :in => [1, 2], :message => "must choose 1 or 2"
+                :in => [1, 2, 3], :message => "must choose 1, 2 or 3"
             }
 
   def first_choice_articles
@@ -38,9 +38,19 @@ class Category < ActiveRecord::Base
     end
   end
 
+  def third_choice_articles
+    self.mappings.select(&:third_choice).map do |m|
+      {
+          :article => Article.find(m.third_choice),
+          :comment => m.third_choice_comment
+      }
+    end
+  end
+
   def voted_in_articles
     return first_choice_articles if self.report_choices == 1
     return first_choice_articles + second_choice_articles if self.report_choices == 2
+    return first_choice_articles + second_choice_articles + third_choice_articles if self.report_choices == 3
     []
   end
 end
