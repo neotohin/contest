@@ -12,7 +12,7 @@
 
             <li>
               <%= label_tag "first_choice[#{category.id}]", "First choice:" %>
-              <%= select_tag "first_choice[#{category.id}]", options_from_collection_for_select(articles, :id, :pretty_title, @m[category.name][:first_choice]) %>
+              <%= select_tag "first_choice[#{category.id}]", options_for_select(articles.collect { |a| [a.pretty_title, a.id] }, @m[category.name][:first_choice]) %>
             </li>
             <br/>
 
@@ -26,7 +26,7 @@
 
                 <li>
                   <%= label_tag "second_choice[#{category.id}]", "Second choice:" %>
-                  <%= select_tag "second_choice[#{category.id}]", options_from_collection_for_select(articles, :id, :pretty_title, @m[category.name][:second_choice]) %>
+                  <%= select_tag "second_choice[#{category.id}]", options_for_select([["<No Selection>", nil]] + articles.collect { |a| [a.pretty_title, a.id] }, @m[category.name][:second_choice]) %>
                 </li>
                 <br/>
 
@@ -41,7 +41,7 @@
 
                 <li>
                   <%= label_tag "third_choice[#{category.id}]", "Third choice:" %>
-                  <%= select_tag "third_choice[#{category.id}]", options_from_collection_for_select(articles, :id, :pretty_title, @m[category.name][:third_choice]) %>
+                  <%= select_tag "third_choice[#{category.id}]", options_for_select([["<No Selection>", nil]] + articles.collect { |a| [a.pretty_title, a.id] }, @m[category.name][:third_choice]) %>
                 </li>
                 <br/>
 
