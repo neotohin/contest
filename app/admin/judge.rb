@@ -192,6 +192,14 @@ ActiveAdmin.register Judge do
     link_to "Add Category", add_category_admin_judge_path(resource)
   end
 
+  action_item :mail, :only => :show do
+    link_to "Send Mail", send_mail_admin_judge_path(resource)
+  end
+
+  action_item :vote, :only => :show do
+    link_to "Vote", vote_admin_judge_path(resource)
+  end
+
   show do
     attributes_table do
       row :name

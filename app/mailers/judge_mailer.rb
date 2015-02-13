@@ -1,11 +1,15 @@
 class JudgeMailer < ApplicationMailer
 
+  attr_reader :resource
+
+  include ApplicationHelper::SuperJudgeExtras
+
   default :from => %("#{Setting.first.default_person}" <#{Setting.first.default_email}>)
 
   add_template_helper(ApplicationHelper)
 
   def contest_notification(to_name, to_email, judge)
-    @judge = judge
+    @judge   = judge
     @details = judge.articles.group_by do |document|
       /([A-Z]{1,2})/.match(document.code)[1]
     end
@@ -14,9 +18,18 @@ class JudgeMailer < ApplicationMailer
   end
 
   def voting_notification(to_name, to_email, superjudge)
-    @superjudge = superjudge
-    @details = superjudge.all_articles.group_by do |article_info|
+    @resource    = superjudge
+    article_list = calculate_judge_mailings
+    @details     = article_list.select do |article_info|
+      article_info[:mail_to_sj] == "MAIL"
+    end.group_by do |article_info|
       /([A-Z]{1,2})/.match(article_info[:article].code)[1]
+    end
+
+    @numbers_to_pick = article_list.group_by do |article_info|
+      article_info[:article].category
+    end.keys.reduce({}) do |m, category|
+      m.merge({ category => must_choose_number(article_list, category) })
     end
 
     mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)

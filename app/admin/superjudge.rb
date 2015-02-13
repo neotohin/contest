@@ -4,7 +4,7 @@ ActiveAdmin.register Superjudge do
 
   menu :priority => 6
 
-  scope("All") {|scope| scope.all}
+  scope("All") { |scope| scope.all }
   scope("Mail Sent") { |scope| scope.where(:sent_mail => true) }
   scope("Mail Not Sent") { |scope| scope.where(:sent_mail => nil) }
 
@@ -65,6 +65,10 @@ ActiveAdmin.register Superjudge do
     end
   end
 
+  action_item :mail, :only => :show do
+    link_to "Send Mail", send_mail_admin_superjudge_path(resource)
+  end
+
   show do
 
     attributes_table do
@@ -88,15 +92,27 @@ ActiveAdmin.register Superjudge do
 
     panel "Categories for this Superjudge" do
       table_for(superjudge.categories.sort_by(&:code)) do |category|
-        category.column("Code")  { |item| item.code }
-        category.column("Name")  { |item| link_to item.name, admin_category_path(item.id) }
-        category.column("Number of Articles")   { |item| item.articles.where(:category => category).count }
+        category.column("Code") { |item| item.code }
+        category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
+        category.column("Number of Articles") { |item| item.articles.where(:category => category).count }
         category.column("Report Choices") { |item| report_choice_tags(item.report_choices) }
       end
     end
 
     panel "Articles Under Consideration for this Superjudge" do
-      table_for(superjudge.all_articles.sort_by { |a| a[:article].code}) do |article_info|
+      article_list = calculate_judge_mailings.sort_by do |a|
+        a[:article].category.id.to_s + a[:award_level].to_s
+      end
+      table_for(article_list) do |article_info|
+        article_info.column("Action") do |item|
+          if item[:mail_to_sj] == "WINNER"
+            status_tag :winner, :style => "background: green;"
+          elsif item[:mail_to_sj] == "MAIL"
+            status_tag :mail, :style => "background: blue;"
+          else
+            ""
+          end
+        end
         article_info.column("Status") do |item|
           show_prize_level(item[:article])
         end
@@ -109,6 +125,7 @@ ActiveAdmin.register Superjudge do
             end
           end
         }
+        article_info.column("Judge") { |item| item[:article].judge.name }
       end
     end
   end
@@ -136,4 +153,6 @@ def set_mail_to_people
     [Setting.first.default_person, Setting.first.default_email]
   end
 end
+
+include ApplicationHelper::SuperJudgeExtras
 

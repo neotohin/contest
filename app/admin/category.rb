@@ -87,6 +87,7 @@ ActiveAdmin.register Category do
               end
           end
         }
+        document.column("Judge") { |item| item.judge.name }
       end
     end
 

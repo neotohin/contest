@@ -1,4 +1,4 @@
-<p>Dear <%= get_first_name(@superjudge.name) %>,</p>
+<p>Dear <%= get_first_name(@resource.name) %>,</p>
 
 <div>
   <p>
@@ -66,10 +66,10 @@
         <%= get_instructions(major_code) %>
       </p>
 
-      <% article_infos.group_by{ |i| i[:article].category_id }.each do |category_id, doc_infos| %>
+      <% article_infos.group_by{ |i| i[:article].category }.each do |category, doc_infos| %>
           <div style="margin-left: 25px;">
             <p>
-              <strong><%= Category.find(category_id).name %></strong>
+              <strong><%= "#{category.name} (please select #{pluralize(@numbers_to_pick[category], 'article')} in this category)" %></strong>
             </p>
             <% doc_infos.sort_by { |d| d[:article].code }.each do |doc_info| %>
                 <% if doc_info[:article].code.start_with?("SI") %>
@@ -81,7 +81,6 @@
                       <a href="<%= doc_info[:article].link %>"><%= doc_info[:article].pretty_title %></a>
                     </li>
                 <% end %>
-                <p>Comment: <%= doc_info[:comment] %></p>
             <% end %>
           </div>
       <% end %>
