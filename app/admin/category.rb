@@ -8,16 +8,12 @@ ActiveAdmin.register Category do
   menu :priority => 4
 
   sidebar :status, :priority => 0 do
-    if Setting.first.mail_option
-      div "Mailings are activated", :style => "color: red"
-    else
-      div "Mailings are not activated"
-    end
+    mail_option_status
   end
 
   filter :supercategory
   filter :articles, :label => "Articles"
-  filter :superjudge
+  filter :superjudges
   filter :judges
   filter :name
   filter :code
@@ -38,7 +34,7 @@ ActiveAdmin.register Category do
       category.judges.count
     end
 
-    column :superjudge
+    column :superjudges
 
     column :report_choices do |category|
       report_choice_tags(category.report_choices)
@@ -51,7 +47,7 @@ ActiveAdmin.register Category do
       row :supercategory
       row :code
       row :name
-      row :superjudge
+      row :superjudges
 
       row "# Judges" do
         category.judges.count
@@ -83,10 +79,10 @@ ActiveAdmin.register Category do
         document.column("Code") { |item| item.code }
         document.column("Title") { |item|
           div do
-              div link_to item.pretty_title, admin_article_path(item.id)
-              if (m = item.any_choice_article?)
-                div "Comment: #{m.comment_for(item.id)}", :style => "width: 600px;"
-              end
+            div link_to item.pretty_title, admin_article_path(item.id)
+            if (m = item.any_choice_article?)
+              div "Comment: #{m.comment_for(item.id)}", :style => "width: 600px;"
+            end
           end
         }
         document.column("Publisher") { |item| item.publisher_name }
@@ -99,7 +95,7 @@ ActiveAdmin.register Category do
   form do |f|
     inputs 'Details' do
       f.input :supercategory
-      f.input :superjudge
+      f.input :superjudges
       f.input :name
       f.input :code
       f.input :report_choices, :as => :select, :collection => [1, 2, 3]

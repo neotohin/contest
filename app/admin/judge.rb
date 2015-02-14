@@ -17,12 +17,8 @@ ActiveAdmin.register Judge do
     Judge.where(:id => scope.select { |judge| judge.all_votes_in? == "No" }.map(&:id))
   end
 
-  sidebar :status, :priority => 0 do
-    if Setting.first.mail_option
-      div "Mailings are activated", :style => "color: red"
-    else
-      div "Mailings are not activated"
-    end
+  sidebar :status, :only => :index, :priority => 0 do
+    mail_option_status
   end
 
   filter :articles
@@ -106,7 +102,7 @@ ActiveAdmin.register Judge do
         flash[:error] = "Nothing to mail for #{@judge.name}"
       else
         Timeout::timeout(10) do
-          JudgeMailer.contest_notification(*set_mail_to_people, @judge).deliver_now
+          JudgeMailer.judge_notification(*set_mail_to_people, @judge).deliver_now
         end
         if Setting.first.mail_option
           @judge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
@@ -133,10 +129,10 @@ ActiveAdmin.register Judge do
         return
       end
       @details = @judge.articles.group_by(&:category)
-      @m = {}
+      @m       = {}
       @details.each do |category, articles|
         m = category.mappings.where(:judge_id => @judge.id).first
-        @m.merge!({ category.name  => {} })
+        @m.merge!({ category.name => {} })
         @m[category.name].merge!({ :first_choice => m.first_choice })
         @m[category.name].merge!({ :first_choice_comment => m.first_choice_comment })
         @m[category.name].merge!({ :second_choice => m.second_choice })
@@ -201,6 +197,10 @@ ActiveAdmin.register Judge do
   end
 
   show do
+    panel "Mailings status" do
+      mail_option_status
+    end
+
     attributes_table do
       row :name
       row :email
@@ -210,16 +210,17 @@ ActiveAdmin.register Judge do
       end
 
       row :sent_mail_time
+
       row :all_votes_in? do
         judge.all_votes_in?
       end
 
-      row "# Articles" do
-        judge.articles.count
-      end
-
       row "# Categories" do
         judge.categories.count
+      end
+
+      row "# Articles" do
+        judge.articles.count
       end
     end
 

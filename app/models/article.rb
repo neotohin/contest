@@ -69,6 +69,10 @@ class Article < ActiveRecord::Base
     self.id == m.third_choice
   end
 
+  def is_a_final_article?
+    self.final == "WINNER" || self.final == "MAIL"
+  end
+
   private
 
   attr_reader :regex

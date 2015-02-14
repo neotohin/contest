@@ -35,11 +35,43 @@ module ApplicationHelper
     end
   end
 
+  def show_final_level(article)
+    if article.final == "NO"
+      ""
+    elsif article.final == "MAIL"
+      status_tag :pending, :style => "background: blue;"
+    elsif article.final == "WINNER"
+      status_tag :winner, :style => "background: green;"
+    else
+      ""
+    end
+  end
+
+  def show_final_level_string(article)
+    if article.final == "NO"
+      "Not Considered"
+    elsif article.final == "MAIL"
+      "Pending"
+    elsif article.final == "WINNER"
+      "Winner"
+    else
+      "--"
+    end
+  end
+
+  def mail_option_status
+    if Setting.first.mail_option
+      div "Mailings are activated", :style => "color: red"
+    else
+      div "Mailings are not activated"
+    end
+  end
+
   module SuperJudgeExtras
     NUMBER_OF_WINNERS = 5
 
     def calculate_judge_mailings
-      resource.all_articles.group_by do |article_info|
+      result = resource.all_articles.group_by do |article_info|
         article_info[:article].category
       end.map do |category, articles|
         articles_by_level = articles.sort_by do |article|
@@ -71,12 +103,17 @@ module ApplicationHelper
           end
         end
         articles_by_level
-      end.flatten
+      end.flatten.map do |article_info|
+        article = Article.find(article_info[:article].id)
+        article.final = article_info[:mail_to_sj]
+        article.save
+        article_info
+      end
 
     end
 
 # Of the number of mailed articles in a category, this is how many must be
-# selected by the superjudge
+# selected by the superjudges
 
     def must_choose_number(article_list, category)
       NUMBER_OF_WINNERS - article_list.select do |article_info|

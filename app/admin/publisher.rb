@@ -2,6 +2,10 @@ ActiveAdmin.register Publisher do
 
   menu :priority => 8
 
+  sidebar :status, :priority => 0 do
+    mail_option_status
+  end
+
   index do
     column :name
     column :code_number

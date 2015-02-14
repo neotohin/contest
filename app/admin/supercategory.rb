@@ -5,17 +5,13 @@ ActiveAdmin.register Supercategory do
   menu :priority => 3
 
   sidebar :status, :priority => 0 do
-    if Setting.first.mail_option
-      div "Mailings are activated", :style => "color: red"
-    else
-      div "Mailings are not activated"
-    end
+    mail_option_status
   end
 
   filter :display_name
   filter :letter_code
   filter :instructions
-  filter :categories
+  filter :category
 
   index do
     column do |supercategory|

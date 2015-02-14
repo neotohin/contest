@@ -13,4 +13,17 @@ class Superjudge < ActiveRecord::Base
     self.categories.map(&:voted_in_articles).flatten.compact
   end
 
+  def articles_to_vote_for
+    all_articles.select do |article_info|
+      article_info[:article].final == "MAIL"
+    end.map do |article_info|
+      article_info[:article]
+    end
+  end
+
+  def all_votes_in?
+    return false unless all_articles.any? { |article_info| article_info[:article].is_a_final_article? }
+    !all_articles.any? { |article_info| article_info[:article].final == "MAIL" }
+  end
+
 end

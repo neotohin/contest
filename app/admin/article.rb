@@ -9,19 +9,19 @@ ActiveAdmin.register Article do
   scope("Articles Not Assigned") { |scope| scope.where("JUDGE_ID IS NULL") }
 
   scope("Chosen") do |scope|
-    Article.where(:id => scope.select { |article| article.a_first_choice_article? || article.a_second_choice_article? }.map(&:id))
+    Article.where(:id => scope.select { |article| article.any_choice_article? }.map(&:id))
+  end
+
+  scope("Final") do |scope|
+    Article.where(:id => scope.select { |article| article.is_a_final_article? }.map(&:id))
   end
 
   sidebar :status, :priority => 0 do
-    if Setting.first.mail_option
-      div "Mailings are activated", :style => "color: red"
-    else
-      div "Mailings are not activated"
-    end
+    mail_option_status
   end
 
-  filter :judge
-  filter :category
+  # filter :judge, :as => :select, :collection => Judge.all.sort_by(&:name)
+  # filter :category, :as => :select, :collection => Category.all.sort_by(&:name)
   filter :title, :label => "Article"
 
   index do
@@ -46,6 +46,10 @@ ActiveAdmin.register Article do
 
     column :status do |article|
       show_prize_level(article)
+    end
+
+    column :final do |article|
+      show_final_level(article)
     end
 
     column :publisher do |article|
@@ -78,6 +82,10 @@ ActiveAdmin.register Article do
       show_prize_level_string(article)
     end
 
+    column :final do |article|
+      show_final_level_string(article)
+    end
+
     column :publisher do |article|
       article.publisher_name
     end
@@ -98,6 +106,10 @@ ActiveAdmin.register Article do
     attributes_table do
       row :status do |article|
         show_prize_level(article)
+      end
+
+      row :final do |article|
+        show_final_level(article)
       end
 
       row :code

@@ -1,0 +1,36 @@
+<h2><%= "#{@superjudge.name} - Enter Favorites" %></h2>
+
+<%= form_tag record_vote_admin_superjudge_path(@superjudge.id), :class => "formtastic superjudge", :novalidate => "novalidate", :accept_charset => "UTF-8" do %>
+    <fieldset class="inputs">
+      <legend><span>Details</span></legend>
+      <ol>
+        <% @details.each do |category, articles| %>
+            <hr/>
+            <h4>
+              <strong><%= "Code: #{category.code} - Category: #{category.name}" %></strong>
+            </h4>
+
+            <li>
+              <%= label_tag "choice[#{category.id}]", "Choice:" %>
+              <%= select_tag "choice[#{category.id}]", options_for_select(articles.collect { |a| [a.pretty_title, a.id] }, @m[category.name][:choice]) %>
+            </li>
+            <br/>
+
+            <li>
+              <%= label_tag "choice_comment[#{category.id}]", "Comment:" %>
+              <%= text_field_tag "choice_comment[#{category.id}]", @m[category.name][:choice_comment] %>
+            </li>
+            <br/>
+        <% end %>
+      </ol>
+      <hr/>
+    </fieldset>
+    <fieldset class="actions">
+      <p>All previous votes for this superjudge will be overwritten by these selections</p>
+      <br />
+      <ol>
+        <li><%= submit_tag :submit %></li>
+        <li><%= submit_tag :cancel, :style => "background: #FBFBFB; color: #5E6469;" %></li>
+      </ol>
+    </fieldset>
+<% end %>

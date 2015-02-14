@@ -8,7 +8,7 @@ class JudgeMailer < ApplicationMailer
 
   add_template_helper(ApplicationHelper)
 
-  def contest_notification(to_name, to_email, judge)
+  def judge_notification(to_name, to_email, judge)
     @judge   = judge
     @details = judge.articles.group_by do |document|
       /([A-Z]{1,2})/.match(document.code)[1]
@@ -17,9 +17,10 @@ class JudgeMailer < ApplicationMailer
     mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)
   end
 
-  def voting_notification(to_name, to_email, superjudge)
+  def superjudge_notification(to_name, to_email, superjudge)
     @resource    = superjudge
     article_list = calculate_judge_mailings
+
     @details     = article_list.select do |article_info|
       article_info[:mail_to_sj] == "MAIL"
     end.group_by do |article_info|

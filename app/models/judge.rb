@@ -12,7 +12,8 @@ class Judge < ActiveRecord::Base
             :presence => true
 
   def all_votes_in?
-    self.mappings.map(&:first_choice).all? ? "Yes" : "No"
+    first_choices = self.mappings.map(&:first_choice)
+    first_choices.count > 0 && first_choices.all?  ? "Yes" : "No"
   end
 
 end
