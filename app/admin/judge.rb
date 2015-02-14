@@ -235,7 +235,7 @@ ActiveAdmin.register Judge do
 
     panel "Articles for this Judge" do
       table_for(judge.articles.sort_by(&:code)) do |document|
-        document.column("Status") do |item|
+        document.column("Phase 1") do |item|
           show_prize_level(item)
         end
         document.column("Code") { |item| item.code }

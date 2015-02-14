@@ -182,7 +182,10 @@ ActiveAdmin.register Superjudge do
         a[:article].category.id.to_s + a[:award_level].to_s
       end
       table_for(article_list) do |article_info|
-        article_info.column("Action") do |item|
+        article_info.column("Phase 1") do |item|
+          show_prize_level(item[:article])
+        end
+        article_info.column("Phase 2") do |item|
           if item[:mail_to_sj] == "WINNER"
             status_tag :winner, :style => "background: green;"
           elsif item[:mail_to_sj] == "MAIL"
@@ -190,9 +193,6 @@ ActiveAdmin.register Superjudge do
           else
             ""
           end
-        end
-        article_info.column("Status") do |item|
-          show_prize_level(item[:article])
         end
         article_info.column("Code") { |item| item[:article].code }
         article_info.column("Title") { |item|

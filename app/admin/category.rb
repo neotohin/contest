@@ -71,7 +71,7 @@ ActiveAdmin.register Category do
     end
     panel "Articles for this Category" do
       table_for(category.articles.sort_by(&:code)) do |document|
-        document.column("Status") do |item|
+        document.column("Phase 1") do |item|
           show_prize_level(item)
         end
         document.column("Code") { |item| item.code }
