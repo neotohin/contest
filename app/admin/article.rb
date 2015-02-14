@@ -8,11 +8,11 @@ ActiveAdmin.register Article do
   scope("Articles Assigned") { |scope| scope.where("JUDGE_ID IS NOT NULL") }
   scope("Articles Not Assigned") { |scope| scope.where("JUDGE_ID IS NULL") }
 
-  scope("Chosen") do |scope|
+  scope("Phase 1 Chosen") do |scope|
     Article.where(:id => scope.select { |article| article.any_choice_article? }.map(&:id))
   end
 
-  scope("Final") do |scope|
+  scope("Phase 2 Chosen") do |scope|
     Article.where(:id => scope.select { |article| article.is_a_final_article? }.map(&:id))
   end
 
@@ -44,11 +44,11 @@ ActiveAdmin.register Article do
       link_to judge.name, admin_judge_path(judge.id) if judge
     end
 
-    column :status do |article|
+    column :phase_1 do |article|
       show_prize_level(article)
     end
 
-    column :final do |article|
+    column :phase_2 do |article|
       show_final_level(article)
     end
 
@@ -78,7 +78,7 @@ ActiveAdmin.register Article do
       judge.name if judge
     end
 
-    column :status do |article|
+    column :phase_1 do |article|
       show_prize_level_string(article)
     end
 
@@ -86,7 +86,7 @@ ActiveAdmin.register Article do
       article.comment
     end
 
-    column :final do |article|
+    column :phase_2 do |article|
       show_final_level_string(article)
     end
 
@@ -108,11 +108,11 @@ ActiveAdmin.register Article do
   show :title => :pretty_title do
 
     attributes_table do
-      row :status do |article|
+      row :phase_1 do |article|
         show_prize_level(article)
       end
 
-      row :final do |article|
+      row :phase_2 do |article|
         show_final_level(article)
       end
 
@@ -140,9 +140,9 @@ ActiveAdmin.register Article do
         link_to j.name, admin_judge_path(judge_id) if j
       end
 
-      if (m = resource.any_choice_article?)
+      if resource.any_choice_article?
         row :comment do |article|
-          m.comment_for(article.id)
+          article.comment
         end
       end
     end

@@ -39,9 +39,7 @@ class Article < ActiveRecord::Base
 
   def comment
     if (mapping = any_choice_article?)
-      mapping.first_choice_comment.presence ||
-          mapping.second_choice_comment.presence ||
-          mapping.third_choice_comment.presence
+      mapping.comment_for(self.id)
     else
       ""
     end
