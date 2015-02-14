@@ -6,18 +6,27 @@ class Article < ActiveRecord::Base
 
   # CATEGORY_LETTERS = "(#{Setting.first.category_prefix})"
   CATEGORY_LETTERS = "(SI|F|S|R|I)"
-  REGEX     = "^#\\d+e?\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
-  LAX_REGEX = "^#\\d+e?\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)"
-  SI_REGEX  = "^#\\d+e?\\s((SI)\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\.docx"
+  REGEX     = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
+  LAX_REGEX = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)"
+  SI_REGEX  = "^(#\\d+e?)\\s((SI)\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\.docx"
 
   def pretty_title
-    return regex[3] if article_regex
+    return regex[4] if article_regex
     self.title
   end
 
   def code
+    return regex[2] if article_regex
+    ""
+  end
+
+  def publisher_number
     return regex[1] if article_regex
     ""
+  end
+
+  def publisher_name
+    Publisher.where(:code_number => self.publisher_number).first.name || "--"
   end
 
   def judge

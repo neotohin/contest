@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150211034453) do
+ActiveRecord::Schema.define(version: 20150213232247) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -105,6 +105,15 @@ ActiveRecord::Schema.define(version: 20150211034453) do
   add_index "mappings", ["judge_id"], name: "index_mappings_on_judge_id"
   add_index "mappings", ["second_choice"], name: "index_mappings_on_second_choice"
   add_index "mappings", ["third_choice"], name: "index_mappings_on_third_choice"
+
+  create_table "publishers", force: :cascade do |t|
+    t.string   "name"
+    t.string   "code_number"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "publishers", ["code_number"], name: "index_publishers_on_code_number"
 
   create_table "settings", force: :cascade do |t|
     t.string   "articles_home"

@@ -70,6 +70,8 @@ ActiveAdmin.register Category do
       table_for(category.judges.sort_by(&:name)) do |judge|
         judge.column("Judge") { |item| link_to item.name, admin_judge_path(item.id) }
         judge.column("Number of Articles") { |item| item.articles.where(:category => category).count }
+        judge.column("Sent Mail") { |item| status_tag item.sent_mail ? "Yes" : "No" }
+        judge.column("Voted?") { |item| status_tag item.all_votes_in? }
         judge.column("Weight") { |item| item.mappings.where(:category => category).first.weight }
       end
     end
@@ -87,6 +89,7 @@ ActiveAdmin.register Category do
               end
           end
         }
+        document.column("Publisher") { |item| item.publisher_name }
         document.column("Judge") { |item| item.judge.name }
       end
     end

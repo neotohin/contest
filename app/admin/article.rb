@@ -48,6 +48,43 @@ ActiveAdmin.register Article do
       show_prize_level(article)
     end
 
+    column :publisher do |article|
+      article.publisher_name
+    end
+
+  end
+
+  csv do
+    column :code do |article|
+      article.code
+    end
+
+    column :category do |article|
+      category_id = article.category_id
+      Category.find(category_id).name
+    end
+
+    column :article do |article|
+      article.pretty_title
+    end
+
+    column :judge do |article|
+      judge_id = article.judge_id
+      judge    = Judge.find(judge_id) if judge_id
+      judge.name if judge
+    end
+
+    column :status do |article|
+      show_prize_level_string(article)
+    end
+
+    column :publisher do |article|
+      article.publisher_name
+    end
+
+    column :publisher_code_number do |article|
+      article.publisher_number
+    end
   end
 
   controller do
@@ -102,9 +139,9 @@ ActiveAdmin.register Article do
     end
 
     inputs 'Use this section to reassign this article to another judge' do
-       if resource.a_first_choice_article? || resource.a_second_choice_article?
-         li "WARNING: This article has already been selected as a first or second choice favorite by judge #{resource.judge.name}. Be sure to resubmit votes for this judge.", :style => "color: red;"
-       end
+      if resource.a_first_choice_article? || resource.a_second_choice_article?
+        li "WARNING: This article has already been selected as a first or second choice favorite by judge #{resource.judge.name}. Be sure to resubmit votes for this judge.", :style => "color: red;"
+      end
       f.input :judge, :collection => resource.category.mappings.map(&:judge).map { |j| [j.name, j.id] }, :include_blank => false
     end
     f.actions

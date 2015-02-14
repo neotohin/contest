@@ -23,6 +23,18 @@ module ApplicationHelper
     end
   end
 
+  def show_prize_level_string(article)
+    if article.a_first_choice_article?
+      "First Choice"
+    elsif article.a_second_choice_article?
+      "Second Choice"
+    elsif article.a_third_choice_article?
+      "Third Choice"
+    else
+      "Not Chosen"
+    end
+  end
+
   module SuperJudgeExtras
     NUMBER_OF_WINNERS = 5
 

@@ -247,6 +247,7 @@ ActiveAdmin.register Judge do
             end
           end
         }
+        document.column("Publisher") { |item| item.publisher_name }
       end
     end
   end
