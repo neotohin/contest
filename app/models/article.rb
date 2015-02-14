@@ -37,6 +37,16 @@ class Article < ActiveRecord::Base
     Category.find(self.category_id)
   end
 
+  def comment
+    if (mapping = any_choice_article?)
+      mapping.first_choice_comment.presence ||
+          mapping.second_choice_comment.presence ||
+          mapping.third_choice_comment.presence
+    else
+      ""
+    end
+  end
+
   def any_choice_article?
     h = [self.id] * 3
     Mapping.where("first_choice = ? OR second_choice = ? OR third_choice = ?", *h).first

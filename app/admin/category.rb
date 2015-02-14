@@ -11,10 +11,8 @@ ActiveAdmin.register Category do
     mail_option_status
   end
 
-  filter :supercategory
-  filter :articles, :label => "Articles"
-  filter :superjudges
-  filter :judges
+  filter :supercategory, :as => :select, :collection => Supercategory.all.sort_by(&:display_name)
+  filter :judges, :as => :select, :collection => Judge.all.sort_by(&:name)
   filter :name
   filter :code
   filter :report_choices

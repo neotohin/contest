@@ -12,7 +12,7 @@
 
             <li>
               <%= label_tag "first_choice[#{category.id}]", "First choice:" %>
-              <%= select_tag "first_choice[#{category.id}]", options_for_select(articles.collect { |a| [a.pretty_title, a.id] }, @m[category.name][:first_choice]) %>
+              <%= select_tag "first_choice[#{category.id}]", options_for_select([["<No Selection>", nil]] + articles.collect { |a| [a.pretty_title, a.id] }, @m[category.name][:first_choice]) %>
             </li>
             <br/>
 

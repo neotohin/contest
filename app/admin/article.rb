@@ -20,8 +20,8 @@ ActiveAdmin.register Article do
     mail_option_status
   end
 
-  # filter :judge, :as => :select, :collection => Judge.all.sort_by(&:name)
-  # filter :category, :as => :select, :collection => Category.all.sort_by(&:name)
+  filter :judge, :as => :select, :collection => Judge.all.sort_by(&:name)
+  filter :category, :as => :select, :collection => Category.all.sort_by(&:name)
   filter :title, :label => "Article"
 
   index do
@@ -80,6 +80,10 @@ ActiveAdmin.register Article do
 
     column :status do |article|
       show_prize_level_string(article)
+    end
+
+    column :comment do |article|
+      article.comment
     end
 
     column :final do |article|

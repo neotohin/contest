@@ -21,8 +21,7 @@ ActiveAdmin.register Judge do
     mail_option_status
   end
 
-  filter :articles
-  filter :categories
+  filter :categories, :as => :select, :collection => Category.all.sort_by(&:name)
   filter :name
   filter :email
   filter :sent_mail
@@ -212,7 +211,7 @@ ActiveAdmin.register Judge do
       row :sent_mail_time
 
       row :all_votes_in? do
-        judge.all_votes_in?
+        status_tag judge.all_votes_in?
       end
 
       row "# Categories" do
@@ -276,3 +275,4 @@ def set_mail_to_people
     [Setting.first.default_person, Setting.first.default_email]
   end
 end
+

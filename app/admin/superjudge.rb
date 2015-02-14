@@ -8,12 +8,20 @@ ActiveAdmin.register Superjudge do
   scope("Mail Sent") { |scope| scope.where(:sent_mail => true) }
   scope("Mail Not Sent") { |scope| scope.where(:sent_mail => nil) }
 
+  scope("Voted?") do |scope|
+    Superjudge.where(:id => scope.select { |superjudge| superjudge.all_votes_in? == "Yes" }.map(&:id))
+  end
+
+  scope("Not Voted?") do |scope|
+    Superjudge.where(:id => scope.select { |superjudge| superjudge.all_votes_in? == "No" }.map(&:id))
+  end
+
   sidebar :status, :only => :index, :priority => 0 do
     mail_option_status
   end
 
   filter :articles
-  filter :categories
+  filter :categories, :as => :select, :collection => Category.all.sort_by(&:name)
   filter :name
   filter :email
   filter :sent_mail
@@ -147,7 +155,7 @@ ActiveAdmin.register Superjudge do
       row :sent_mail_time
 
       row :all_votes_in? do
-        superjudge.all_votes_in?
+        status_tag superjudge.all_votes_in?
       end
 
       row "# Categories" do
