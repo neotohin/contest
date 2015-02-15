@@ -27,6 +27,8 @@ group :development, :test do
   gem 'pry',         '~> 0.9.12'
   gem 'pry-byebug',  '~> 1.3.2'
   gem 'pry-rails',   '~> 0.3.2'
+  gem 'ruby-debug-ide',          '~> 0.4.23.beta1' # Need for Rubymine IDE
+  gem 'debase',                  '>= 0.0.9' # Need for Rubymine IDE
 end
 
 group :production do

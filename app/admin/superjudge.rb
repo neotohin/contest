@@ -1,6 +1,7 @@
 ActiveAdmin.register Superjudge do
 
-  permit_params :list, :of, :attributes, :on, :model, :name, :email, :sent_mail, :sent_mail_time
+  permit_params :list, :of, :attributes, :on, :model, :name, :email, :sent_mail,
+                :sent_mail_time, :choice, :choice_comment, :must_choose
 
   menu :priority => 6
 
@@ -80,15 +81,19 @@ ActiveAdmin.register Superjudge do
         redirect_to admin_superjudges_path
         return
       end
+
       @details = @superjudge.articles_to_vote_for.group_by(&:category)
-      @m = {}
+      @m       = {}
       @details.each do |category, articles|
+        binding.pry
         @m.merge!({ category.name => {} })
+        @m[category.name][:must_choose_number] = 5 - category.articles.where(:final => "WINNER").count
         articles.each do |article|
-          @m[category.name].merge!({ :choice => article.id })
-          @m[category.name].merge!({ :choice_comment => article.pretty_title })
+          @m[category.name][article.id] = { :choice => article.final == "WINNER_BY_CHOICE" ? "checked" : nil }
+          @m[category.name][article.id].merge!({ :choice_comment => article.superjudge_comment })
         end
       end
+      puts @m
     end
 
     def record_vote
@@ -100,17 +105,30 @@ ActiveAdmin.register Superjudge do
       set_superjudge
       failure = false
 
-      @superjudge.categories.each do |category|
-        m                      = category.mappings.where(:superjudge_id => @superjudge.id).first
-        m.first_choice         = params[:first_choice][category.id.to_s]
-        m.first_choice_comment = (params[:first_choice_comment] || {})[category.id.to_s]
+      @superjudge.articles_to_vote_for.group_by(&:category).each do |category, articles|
+        must_choose = params[:must_choose][category.name]
 
-        failure                = true unless m.valid?
-        m.save
+        number_chosen = if params[:choice] && params[:choice][category.name]
+                          articles.count do |article|
+                            checked = params[:choice][category.name][article.id.to_s]
+                            comment = params[:choice_comment][category.name][article.id.to_s]
+                            checked || (!checked && comment.present?)
+                          end
+                        else
+                          0
+                        end
+
+        articles.each do |article|
+          article.final              = params[:choice][category.name][article.id.to_s] ? "WINNER_BY_CHOICE" : "RUNNER_UP"
+          article.superjudge_comment = params[:choice_comment][category.name][article.id.to_s]
+          article.save
+        end if params[:choice] && params[:choice][category.name]
+
+        failure = true if number_chosen != must_choose.to_i
       end
 
       if failure
-        flash[:error] = "Choices must not be the same for a given category"
+        flash[:error] = "The wrong number of articles was selected for one of the given categories"
         redirect_to vote_admin_superjudge_path(@superjudge)
         return
       end
@@ -172,14 +190,14 @@ ActiveAdmin.register Superjudge do
       table_for(superjudge.categories.sort_by(&:code)) do |category|
         category.column("Code") { |item| item.code }
         category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
-        category.column("Number of Articles") { |item| item.articles.where(:category => category).count }
+        category.column("Number of Articles") { |item| item.articles.map(&:any_choice_article?).compact.count }
         category.column("Report Choices") { |item| report_choice_tags(item.report_choices) }
       end
     end
 
     panel "Articles Under Consideration for this Superjudge" do
       article_list = calculate_judge_mailings.sort_by do |a|
-        a[:article].category.id.to_s + a[:award_level].to_s
+        a[:article].category.code + a[:award_level].to_s
       end
       table_for(article_list) do |article_info|
         article_info.column("Phase 1") do |item|

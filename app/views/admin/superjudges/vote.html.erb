@@ -7,27 +7,28 @@
         <% @details.each do |category, articles| %>
             <hr/>
             <h4>
-              <strong><%= "Code: #{category.code} - Category: #{category.name}" %></strong>
+              <strong><%= "Code: #{category.code} - #{category.name} (please select #{pluralize(@m[category.name][:must_choose_number], 'article')} in this category)" %></strong>
+              <%= hidden_field_tag "must_choose[#{category.name}]", @m[category.name][:must_choose_number] %>
             </h4>
-
-            <li>
-              <%= label_tag "choice[#{category.id}]", "Choice:" %>
-              <%= select_tag "choice[#{category.id}]", options_for_select(articles.collect { |a| [a.pretty_title, a.id] }, @m[category.name][:choice]) %>
-            </li>
-            <br/>
-
-            <li>
-              <%= label_tag "choice_comment[#{category.id}]", "Comment:" %>
-              <%= text_field_tag "choice_comment[#{category.id}]", @m[category.name][:choice_comment] %>
-            </li>
-            <br/>
+            <% articles.each do |article| %>
+                <li>
+                  <%= label_tag "choice[#{category.name}][#{article.id}]", "Title:" %>
+                  <%= check_box_tag "choice[#{category.name}][#{article.id}]", "checked", @m[category.name][article.id][:choice] %><span style="margin-left: 10px;"><%= article.pretty_title %></span>
+                </li>
+                <li>
+                  <%= label_tag "choice_comment[#{category.name}][#{article.id}]", "Comment:" %>
+                  <%= text_field_tag "choice_comment[#{category.name}][#{article.id}]", @m[category.name][article.id][:choice_comment] %>
+                </li>
+                <br/>
+            <% end %>
         <% end %>
       </ol>
       <hr/>
     </fieldset>
     <fieldset class="actions">
-      <p>All previous votes for this superjudge will be overwritten by these selections</p>
-      <br />
+      <p>All previous votes for this superjudge will be overwritten by these
+        selections</p>
+      <br/>
       <ol>
         <li><%= submit_tag :submit %></li>
         <li><%= submit_tag :cancel, :style => "background: #FBFBFB; color: #5E6469;" %></li>
