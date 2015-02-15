@@ -84,9 +84,13 @@ ActiveAdmin.register Superjudge do
           @superjudge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
           @superjudge.save
         end
+        flash[:notice] = "Mail Sent Successfully!"
       else
         flash[:error] = "There are no articles to vote on for #{@superjudge.name} - No mailing sent"
       end
+    rescue
+      flash[:error] = "Mail NOT Sent Successfully!"
+    ensure
       redirect_to admin_superjudges_path
     end
 

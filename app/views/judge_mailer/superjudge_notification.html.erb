@@ -10,11 +10,11 @@
   <p>
     Below are links to these top entries along with the number we’d like you to
     select in each category. You may even recognize some of these entries, but
-    we’d like you to choose your favorites among this new group. Please reply to
-    this email by <strong>Wednesday, February 18</strong> with your favorites
-    with a sentence or two that describes what you especially like about the
-    piece. (In some cases, you may receive another email tomorrow with a smaller
-    set.)
+    we’d like you to choose your favorites among this new group. Please reply
+    to this email by <strong>Wednesday, February 18</strong> with your top choice
+    and your other favorites (up to the number requested) with a sentence or two
+    that describes what you especially like about the piece. In some cases, you
+    may receive another email tomorrow with a smaller set.
   </p>
 
   <p>
@@ -42,14 +42,6 @@
     <a href="mailto:lara@ediblemedia.com">lara@ediblemedia.com</a>
   </p>
 
-  <p>
-    P.S. Your selections will help determine 5 finalists in each category,
-    which
-    will be posted to <a href="ediblefeast.com">ediblefeast.com</a> for Readers’ Choice voting on Monday,
-    February 22. Your vote will also inform Critics’ Choice winners. All winners
-    will be revealed online on Friday, March 20.
-  </p>
-
   <hr/>
 </div>
 
@@ -67,7 +59,8 @@
       <% article_infos.group_by{ |i| i[:article].category }.each do |category, doc_infos| %>
           <div style="margin-left: 25px;">
             <p>
-              <strong><%= "#{category.name} (please select #{pluralize(@numbers_to_pick[category], 'article')} in this category)" %></strong>
+              <strong><%= "#{category.name}" %></strong><br/>
+              <%= "Please select #{pluralize(@numbers_to_pick[category], 'article')} and note which is your #1 choice." %>
             </p>
             <% doc_infos.sort_by { |d| d[:article].code }.each do |doc_info| %>
                 <% if doc_info[:article].code.start_with?("SI") %>

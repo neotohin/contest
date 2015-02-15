@@ -93,7 +93,7 @@ ActiveAdmin.register Category do
   form do |f|
     inputs 'Details' do
       f.input :supercategory
-      f.input :superjudges
+      f.input :superjudge
       f.input :name
       f.input :code
       f.input :report_choices, :as => :select, :collection => [1, 2, 3]
