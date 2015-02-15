@@ -15,7 +15,7 @@ class Superjudge < ActiveRecord::Base
 
   def articles_list_to_vote_for
     all_articles.select do |article_info|
-      %w(MAIL WINNER_BY_CHOICE).include?(article_info[:article].final)
+      %w(MAIL WINNER_BY_CHOICE RUNNER_UP).include?(article_info[:article].final)
     end
   end
 

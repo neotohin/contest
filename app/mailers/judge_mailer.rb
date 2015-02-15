@@ -22,7 +22,7 @@ class JudgeMailer < ApplicationMailer
     article_list = calculate_judge_mailings
 
     @details     = article_list.select do |article_info|
-      article_info[:mail_to_sj] == "MAIL"
+      article_info[:article].final == "MAIL"
     end.group_by do |article_info|
       /([A-Z]{1,2})/.match(article_info[:article].code)[1]
     end

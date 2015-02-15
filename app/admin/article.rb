@@ -13,7 +13,7 @@ ActiveAdmin.register Article do
   end
 
   scope("Phase 2 Chosen") do |scope|
-    Article.where(:id => scope.select { |article| article.is_a_final_article? }.map(&:id))
+    Article.where(:id => scope.select { |article| %w(WINNER WINNER_BY_CHOICE RUNNER_UP MAIL).include?(article.final) }.map(&:id))
   end
 
   sidebar :status, :priority => 0 do
@@ -82,13 +82,15 @@ ActiveAdmin.register Article do
       show_prize_level_string(article)
     end
 
-    column :comment do |article|
+    column :judge_comment do |article|
       article.comment
     end
 
     column :phase_2 do |article|
       show_final_level_string(article)
     end
+
+    column :superjudge_comment
 
     column :publisher do |article|
       article.publisher_name
@@ -140,9 +142,15 @@ ActiveAdmin.register Article do
         link_to j.name, admin_judge_path(judge_id) if j
       end
 
-      if resource.any_choice_article?
-        row :comment do |article|
+      if resource.any_choice_article? && resource.comment.present?
+        row :judge_comment do |article|
           article.comment
+        end
+      end
+
+      if resource.superjudge_comment.present?
+        row :superjudge_comment do |article|
+          article.superjudge_comment
         end
       end
     end

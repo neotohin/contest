@@ -74,6 +74,22 @@ ActiveAdmin.register Superjudge do
   end
 
   controller do
+    def send_mail
+      set_superjudge
+      if @superjudge.all_articles.count { |article_info| article_info[:article].final == "MAIL" } > 0
+        Timeout::timeout(10) do
+          JudgeMailer.superjudge_notification(*set_mail_to_people, @superjudge).deliver_now
+        end
+        if Setting.first.mail_option
+          @superjudge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
+          @superjudge.save
+        end
+      else
+        flash[:error] = "There are no articles to vote on for #{@superjudge.name} - No mailing sent"
+      end
+      redirect_to admin_superjudges_path
+    end
+
     def vote
       set_superjudge
       if @superjudge.categories.count < 1 || @superjudge.articles_to_vote_for.count < 1
@@ -85,7 +101,6 @@ ActiveAdmin.register Superjudge do
       @details = @superjudge.articles_to_vote_for.group_by(&:category)
       @m       = {}
       @details.each do |category, articles|
-        binding.pry
         @m.merge!({ category.name => {} })
         @m[category.name][:must_choose_number] = 5 - category.articles.where(:final => "WINNER").count
         articles.each do |article|
@@ -110,9 +125,7 @@ ActiveAdmin.register Superjudge do
 
         number_chosen = if params[:choice] && params[:choice][category.name]
                           articles.count do |article|
-                            checked = params[:choice][category.name][article.id.to_s]
-                            comment = params[:choice_comment][category.name][article.id.to_s]
-                            checked || (!checked && comment.present?)
+                            params[:choice][category.name][article.id.to_s]
                           end
                         else
                           0
@@ -136,17 +149,6 @@ ActiveAdmin.register Superjudge do
       redirect_to admin_superjudge_path(@superjudge)
     end
 
-    def send_mail
-      set_superjudge
-      Timeout::timeout(10) do
-        JudgeMailer.superjudge_notification(*set_mail_to_people, @superjudge).deliver_now
-      end
-      if Setting.first.mail_option
-        @superjudge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
-        @superjudge.save
-      end
-      redirect_to admin_superjudges_path
-    end
   end
 
   action_item :mail, :only => :show do
@@ -204,20 +206,17 @@ ActiveAdmin.register Superjudge do
           show_prize_level(item[:article])
         end
         article_info.column("Phase 2") do |item|
-          if item[:mail_to_sj] == "WINNER"
-            status_tag :winner, :style => "background: green;"
-          elsif item[:mail_to_sj] == "MAIL"
-            status_tag :mail, :style => "background: blue;"
-          else
-            ""
-          end
+          show_final_level(item[:article])
         end
         article_info.column("Code") { |item| item[:article].code }
         article_info.column("Title") { |item|
           div do
             div link_to item[:article].pretty_title, admin_article_path(item[:article].id)
             if (m = item[:article].any_choice_article?)
-              div "Comment: #{m.comment_for(item[:article].id)}", :style => "width: 600px;"
+              jc = m.comment_for(item[:article].id).presence
+              li "Judge comment: #{jc}", :style => "width: 600px;" if jc
+              sjc = item[:article].superjudge_comment.presence
+              li "Superjudge comment: #{sjc}", :style => "width: 600px;" if sjc
             end
           end
         }

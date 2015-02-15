@@ -25,8 +25,7 @@ class Category < ActiveRecord::Base
       {
           :award_level => 1,
           :article     => Article.find(m.first_choice),
-          :comment     => m.first_choice_comment,
-          :mail_to_sj  => "NO"
+          :comment     => m.first_choice_comment
       }
     end
   end
@@ -36,8 +35,7 @@ class Category < ActiveRecord::Base
       {
           :award_level => 2,
           :article     => Article.find(m.second_choice),
-          :comment     => m.second_choice_comment,
-          :mail_to_sj  => "NO"
+          :comment     => m.second_choice_comment
       }
     end
   end
@@ -47,8 +45,7 @@ class Category < ActiveRecord::Base
       {
           :award_level => 3,
           :article     => Article.find(m.third_choice),
-          :comment     => m.third_choice_comment,
-          :mail_to_sj  => "NO"
+          :comment     => m.third_choice_comment
       }
     end
   end

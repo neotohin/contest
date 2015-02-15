@@ -42,6 +42,10 @@ module ApplicationHelper
       status_tag :pending, :style => "background: blue;"
     elsif article.final == "WINNER"
       status_tag :winner, :style => "background: green;"
+    elsif article.final == "WINNER_BY_CHOICE"
+      status_tag :chosen_winner, :style => "background: green;"
+    elsif article.final == "RUNNER_UP"
+      status_tag :runner_up, :style => "background: purple;"
     else
       ""
     end
@@ -54,6 +58,10 @@ module ApplicationHelper
       "Pending"
     elsif article.final == "WINNER"
       "Winner"
+    elsif article.final == "WINNER_BY_CHOICE"
+      "Chosen Winner"
+    elsif article.final == "RUNNER_UP"
+      "Runner-up"
     else
       "--"
     end
@@ -71,11 +79,28 @@ module ApplicationHelper
     NUMBER_OF_WINNERS = 5
 
     def calculate_judge_mailings
-      result = resource.all_articles.group_by do |article_info|
+      articles_to_consider =  resource.all_articles
+
+      has_not_been_calculated =  articles_to_consider.all? do |article_info|
+        article_info[:article].final.blank?
+      end
+
+      unless has_not_been_calculated
+        return articles_to_consider.group_by do |article_info|
+          article_info[:article].category
+        end.map do |category, article_infos|
+          articles_by_level = article_infos.sort_by do |article_info|
+            article_info[:award_level]
+          end
+          articles_by_level
+        end.flatten
+      end
+
+      articles_to_consider.group_by do |article_info|
         article_info[:article].category
-      end.map do |category, articles|
-        articles_by_level = articles.sort_by do |article|
-          article[:award_level]
+      end.map do |category, article_infos|
+        articles_by_level = article_infos.sort_by do |article_info|
+          article_info[:award_level]
         end
 
         # Cases:
@@ -88,27 +113,25 @@ module ApplicationHelper
         #    articles at this award level need to be mailed
 
         if articles_by_level.length <= NUMBER_OF_WINNERS
-          articles_by_level.each do |article|
-            article[:mail_to_sj] = "WINNER"
+          articles_by_level.each do |article_info|
+            article_info[:article].final = "WINNER"
+            article_info[:article].save
           end
         elsif articles_by_level[NUMBER_OF_WINNERS - 1][:award_level] != articles_by_level[NUMBER_OF_WINNERS][:award_level]
-          articles_by_level[0..NUMBER_OF_WINNERS - 1].each do |article|
-            article[:mail_to_sj] = "WINNER"
+          articles_by_level[0..NUMBER_OF_WINNERS - 1].each do |article_info|
+            article_info[:article].final = "WINNER"
+            article_info[:article].save
           end
         else
           needs_judging_level = articles_by_level[NUMBER_OF_WINNERS - 1][:award_level]
-          articles_by_level.each do |article|
-            article[:mail_to_sj] = "WINNER" if article[:award_level] < needs_judging_level
-            article[:mail_to_sj] = "MAIL" if article[:award_level] == needs_judging_level
+          articles_by_level.each do |article_info|
+            article_info[:article].final = "WINNER" if article_info[:award_level] < needs_judging_level
+            article_info[:article].final = "MAIL" if article_info[:award_level] == needs_judging_level
+            article_info[:article].save
           end
         end
         articles_by_level
-      end.flatten.map do |article_info|
-        article = Article.find(article_info[:article].id)
-        article.final = article_info[:mail_to_sj]
-        article.save
-        article_info
-      end
+      end.flatten
 
     end
 
@@ -119,7 +142,7 @@ module ApplicationHelper
       NUMBER_OF_WINNERS - article_list.select do |article_info|
         article_info[:article].category == category
       end.count do |article_info|
-        article_info[:mail_to_sj] == "WINNER"
+        article_info[:article].final == "WINNER"
       end
     end
   end
