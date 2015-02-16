@@ -1,5 +1,6 @@
 class Article < ActiveRecord::Base
 	belongs_to :judge
+	belongs_to :superjudge
   belongs_to :category
 
   validates :title, :presence => true

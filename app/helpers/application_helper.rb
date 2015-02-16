@@ -115,11 +115,13 @@ module ApplicationHelper
         if articles_by_level.length <= NUMBER_OF_WINNERS
           articles_by_level.each do |article_info|
             article_info[:article].final = "WINNER"
+            article_info[:article].superjudge = resource
             article_info[:article].save
           end
         elsif articles_by_level[NUMBER_OF_WINNERS - 1][:award_level] != articles_by_level[NUMBER_OF_WINNERS][:award_level]
           articles_by_level[0..NUMBER_OF_WINNERS - 1].each do |article_info|
             article_info[:article].final = "WINNER"
+            article_info[:article].superjudge = resource
             article_info[:article].save
           end
         else
@@ -127,6 +129,7 @@ module ApplicationHelper
           articles_by_level.each do |article_info|
             article_info[:article].final = "WINNER" if article_info[:award_level] < needs_judging_level
             article_info[:article].final = "MAIL" if article_info[:award_level] == needs_judging_level
+            article_info[:article].superjudge = resource
             article_info[:article].save
           end
         end

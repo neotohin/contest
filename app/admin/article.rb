@@ -25,23 +25,28 @@ ActiveAdmin.register Article do
   filter :title, :label => "Article"
 
   index do
-    column :code do |article|
-      link_to article.code, admin_category_path(article.category_id)
-    end
-
     column :category, sortable: 'categories.name' do |article|
+      div link_to article.code, admin_category_path(article.category_id)
       category_id = article.category_id
-      link_to Category.find(category_id).name, admin_category_path(category_id)
+      div link_to Category.find(category_id).name, admin_category_path(category_id)
     end
 
     column :article do |article|
       link_to article.pretty_title, admin_article_path(article.id)
     end
 
-    column :judge, :sortable => 'judges.name' do |article|
+    column "Judge/Superjudge", :sortable => 'judges.name' do |article|
       judge_id = article.judge_id
       judge    = Judge.find(judge_id) if judge_id
-      link_to judge.name, admin_judge_path(judge.id) if judge
+      div do
+        span "J: "
+        span link_to judge.name, admin_judge_path(judge.id)
+      end if judge
+      superjudge = article.superjudge
+      div do
+        span "S: "
+        span link_to superjudge.name, admin_superjudge_path(superjudge)
+      end if superjudge
     end
 
     column :phase_1 do |article|
@@ -84,6 +89,10 @@ ActiveAdmin.register Article do
 
     column :judge_comment do |article|
       article.comment
+    end
+
+    column :superjudge do |article|
+      article.superjudge.try(:name)
     end
 
     column :phase_2 do |article|
@@ -147,6 +156,8 @@ ActiveAdmin.register Article do
           article.comment
         end
       end
+
+      row :superjudge if resource.superjudge
 
       if resource.superjudge_comment.present?
         row :superjudge_comment do |article|
