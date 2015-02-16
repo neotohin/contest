@@ -121,8 +121,9 @@ module ApplicationHelper
             article_info[:article].save
           end
         elsif articles_by_level[NUMBER_OF_WINNERS - 1][:award_level] != articles_by_level[NUMBER_OF_WINNERS][:award_level]
-          articles_by_level[0..NUMBER_OF_WINNERS - 1].each do |article_info|
-            article_info[:article].final      = "WINNER"
+          articles_by_level.each_with_index do |article_info, index|
+            article_info[:article].final      = "WINNER" if index < NUMBER_OF_WINNERS
+            article_info[:article].final      = nil if index >= NUMBER_OF_WINNERS
             article_info[:article].superjudge = resource
             article_info[:article].save
           end
