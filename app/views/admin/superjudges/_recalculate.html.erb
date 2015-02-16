@@ -1,0 +1,3 @@
+<%= form_tag recalculate_admin_superjudge_path(@superjudge.id), :class => "formtastic judge", :novalidate => "novalidate", :accept_charset => "UTF-8" do %>
+    <%= submit_tag "Recalculate Phase 2 Status" %><span>&nbsp;(Do this prior to voting to insure accuracy)</span>
+<% end %>

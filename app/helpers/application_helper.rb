@@ -78,22 +78,24 @@ module ApplicationHelper
   module SuperJudgeExtras
     NUMBER_OF_WINNERS = 5
 
-    def calculate_judge_mailings
-      articles_to_consider =  resource.all_articles
+    def calculate_judge_mailings(options = {})
+      articles_to_consider = resource.all_articles
 
-      has_not_been_calculated =  articles_to_consider.all? do |article_info|
-        article_info[:article].final.blank?
-      end
+      unless options[:force_recalculation]
+        has_not_been_calculated = articles_to_consider.all? do |article_info|
+          article_info[:article].final.blank?
+        end
 
-      unless has_not_been_calculated
-        return articles_to_consider.group_by do |article_info|
-          article_info[:article].category
-        end.map do |category, article_infos|
-          articles_by_level = article_infos.sort_by do |article_info|
-            article_info[:award_level]
-          end
-          articles_by_level
-        end.flatten
+        unless has_not_been_calculated
+          return articles_to_consider.group_by do |article_info|
+            article_info[:article].category
+          end.map do |category, article_infos|
+            articles_by_level = article_infos.sort_by do |article_info|
+              article_info[:award_level]
+            end
+            articles_by_level
+          end.flatten
+        end
       end
 
       articles_to_consider.group_by do |article_info|
@@ -114,21 +116,21 @@ module ApplicationHelper
 
         if articles_by_level.length <= NUMBER_OF_WINNERS
           articles_by_level.each do |article_info|
-            article_info[:article].final = "WINNER"
+            article_info[:article].final      = "WINNER"
             article_info[:article].superjudge = resource
             article_info[:article].save
           end
         elsif articles_by_level[NUMBER_OF_WINNERS - 1][:award_level] != articles_by_level[NUMBER_OF_WINNERS][:award_level]
           articles_by_level[0..NUMBER_OF_WINNERS - 1].each do |article_info|
-            article_info[:article].final = "WINNER"
+            article_info[:article].final      = "WINNER"
             article_info[:article].superjudge = resource
             article_info[:article].save
           end
         else
           needs_judging_level = articles_by_level[NUMBER_OF_WINNERS - 1][:award_level]
           articles_by_level.each do |article_info|
-            article_info[:article].final = "WINNER" if article_info[:award_level] < needs_judging_level
-            article_info[:article].final = "MAIL" if article_info[:award_level] == needs_judging_level
+            article_info[:article].final      = "WINNER" if article_info[:award_level] < needs_judging_level
+            article_info[:article].final      = "MAIL" if article_info[:award_level] == needs_judging_level
             article_info[:article].superjudge = resource
             article_info[:article].save
           end

@@ -70,7 +70,11 @@ ActiveAdmin.register Superjudge do
   end
 
   member_action :record_vote, :method => :post do
+  end
 
+  member_action :recalculate, :method => :post do
+    @superjudge = resource
+    @superjudge.recalculate!
   end
 
   controller do
@@ -153,6 +157,12 @@ ActiveAdmin.register Superjudge do
       redirect_to admin_superjudge_path(@superjudge)
     end
 
+    def recalculate
+      set_superjudge
+      calculate_judge_mailings(:force_recalculation => true )
+      redirect_to admin_superjudge_path(@superjudge)
+    end
+
   end
 
   action_item :mail, :only => :show do
@@ -191,7 +201,6 @@ ActiveAdmin.register Superjudge do
       end
     end
 
-
     panel "Categories for this Superjudge" do
       table_for(superjudge.categories.sort_by(&:code)) do |category|
         category.column("Code") { |item| item.code }
@@ -202,6 +211,7 @@ ActiveAdmin.register Superjudge do
     end
 
     panel "Articles Under Consideration for this Superjudge" do
+      render :partial => 'recalculate'
       article_list = calculate_judge_mailings.sort_by do |a|
         a[:article].category.code + a[:award_level].to_s
       end
