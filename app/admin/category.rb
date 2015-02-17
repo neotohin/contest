@@ -67,7 +67,7 @@ ActiveAdmin.register Category do
       end
     end
 
-    panel "Judges for this Category" do
+    panel "Judges for Category #{resource.code} - #{resource.name}" do
       table_for(category.judges.sort_by(&:name)) do |judge|
         judge.column("Judge") { |item| link_to item.name, admin_judge_path(item.id) }
         judge.column("Number of Articles") { |item| item.articles.where(:category => category).count }
@@ -76,7 +76,7 @@ ActiveAdmin.register Category do
         judge.column("Weight") { |item| item.mappings.where(:category => category).first.weight }
       end
     end
-    panel "Articles for this Category" do
+    panel "Articles for Category #{resource.code} - #{resource.name}" do
       table_for(category.articles.sort_by(&:code)) do |document|
         document.column("Phase 1") do |item|
           show_prize_level(item)

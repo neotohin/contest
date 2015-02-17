@@ -196,7 +196,7 @@ ActiveAdmin.register Judge do
   end
 
   show do
-    panel "Mailings status" do
+    panel "Mailings Status" do
       mail_option_status
     end
 
@@ -223,7 +223,7 @@ ActiveAdmin.register Judge do
       end
     end
 
-    panel "Categories for this Judge" do
+    panel "Categories for Judge #{resource.name}" do
       table_for(judge.categories.sort_by(&:code)) do |category|
         category.column("Code") { |item| item.code }
         category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
@@ -233,7 +233,7 @@ ActiveAdmin.register Judge do
       end
     end
 
-    panel "Articles for this Judge" do
+    panel "Articles for Judge #{resource.name}" do
       table_for(judge.articles.sort_by(&:code)) do |document|
         document.column("Phase 1") do |item|
           show_prize_level(item)
