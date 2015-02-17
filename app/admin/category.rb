@@ -32,7 +32,9 @@ ActiveAdmin.register Category do
       category.judges.count
     end
 
-    column :superjudges
+    column :superjudge do |category|
+      category.superjudge.try(:name)
+    end
 
     column :report_choices do |category|
       report_choice_tags(category.report_choices)
