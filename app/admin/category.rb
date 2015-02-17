@@ -33,7 +33,8 @@ ActiveAdmin.register Category do
     end
 
     column :superjudge do |category|
-      category.superjudge.try(:name)
+      superjudge = category.superjudge
+      link_to superjudge.name, admin_superjudge_path(superjudge) if superjudge
     end
 
     column :report_choices do |category|
@@ -47,7 +48,11 @@ ActiveAdmin.register Category do
       row :supercategory
       row :code
       row :name
-      row :superjudges
+
+      row :superjudge do
+        superjudge = category.superjudge
+        link_to superjudge.name, admin_superjudge_path(superjudge) if superjudge
+      end
 
       row "# Judges" do
         category.judges.count
