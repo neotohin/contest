@@ -16,6 +16,10 @@ ActiveAdmin.register Article do
     Article.where(:id => scope.select { |article| %w(WINNER WINNER_BY_CHOICE RUNNER_UP MAIL).include?(article.final) }.map(&:id))
   end
 
+  scope("Phase 2 Winners") do |scope|
+    Article.where(:id => scope.select { |article| %w(WINNER WINNER_BY_CHOICE).include?(article.final) }.map(&:id))
+  end
+
   sidebar :status, :priority => 0 do
     mail_option_status
   end
@@ -78,6 +82,8 @@ ActiveAdmin.register Article do
     column :article do |article|
       article.pretty_title
     end
+
+    column :link
 
     column :judge do |article|
       judge_id = article.judge_id
