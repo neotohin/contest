@@ -25,6 +25,8 @@ ActiveAdmin.register Article do
   filter :title, :label => "Article"
 
   index do
+    render :partial => 'sidebar_toggler'
+
     column :category, sortable: 'categories.name' do |article|
       div link_to article.code, admin_category_path(article.category_id)
       category_id = article.category_id

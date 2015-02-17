@@ -1,0 +1,16 @@
+<script>
+  buttonSection = $("div.action_items");
+  buttonSection.append("<span class=\"action_item\"><a href=\"#\" onclick=\"toggleSidebar()\">Toggle Filters</a></span>");
+    function toggleSidebar() {
+        var fss = $("div#filters_sidebar_section");
+        var sss = $("div#status_sidebar_section");
+        var mainContent = $("#main_content");
+        if (fss.css("display") == "none") {
+            mainContent.css("margin-right", "300px")
+        } else {
+            mainContent.css("margin-right", "0px")
+        }
+        fss.toggle();
+        sss.toggle();
+    }
+</script>
