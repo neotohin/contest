@@ -2,8 +2,6 @@ class JudgeMailer < ApplicationMailer
 
   attr_reader :resource
 
-  include ApplicationHelper::SuperJudgeExtras
-
   default :from => %("#{Setting.first.default_person}" <#{Setting.first.default_email}>)
 
   add_template_helper(ApplicationHelper)
@@ -19,7 +17,7 @@ class JudgeMailer < ApplicationMailer
 
   def superjudge_notification(to_name, to_email, superjudge)
     @resource    = superjudge
-    article_list = calculate_judge_mailings
+    article_list = superjudge.calculate_judge_mailings
 
     @details     = article_list.select do |article_info|
       article_info[:article].final == "MAIL"

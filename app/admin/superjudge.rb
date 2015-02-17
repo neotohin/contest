@@ -159,7 +159,7 @@ ActiveAdmin.register Superjudge do
 
     def recalculate
       set_superjudge
-      calculate_judge_mailings(:force_recalculation => true )
+      @superjudge.calculate_judge_mailings(:force_recalculation => true )
       redirect_to admin_superjudge_path(@superjudge)
     end
 
@@ -201,7 +201,7 @@ ActiveAdmin.register Superjudge do
       end
     end
 
-    panel "Categories for this Superjudge" do
+    panel "Categories for superjudge #{resource.name}" do
       table_for(superjudge.categories.sort_by(&:code)) do |category|
         category.column("Code") { |item| item.code }
         category.column("Name") { |item| link_to item.name, admin_category_path(item.id) }
@@ -210,9 +210,9 @@ ActiveAdmin.register Superjudge do
       end
     end
 
-    panel "Articles Under Consideration for this Superjudge" do
+    panel "Articles Under Consideration for superjudge #{resource.name}" do
       render :partial => 'recalculate'
-      article_list = calculate_judge_mailings.sort_by do |a|
+      article_list = resource.calculate_judge_mailings.sort_by do |a|
         a[:article].category.code + a[:award_level].to_s
       end
       table_for(article_list) do |article_info|
@@ -264,6 +264,4 @@ def set_mail_to_people
     [Setting.first.default_person, Setting.first.default_email]
   end
 end
-
-include ApplicationHelper::SuperJudgeExtras
 

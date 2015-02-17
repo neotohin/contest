@@ -11,7 +11,8 @@
     Below are links to these top entries along with the number we’d like you to
     select in each category. You may even recognize some of these entries, but
     we’d like you to choose your favorites among this new group. Please reply
-    to this email by <strong>Wednesday, February 18</strong> with your top choice
+    to this email by <strong>Wednesday, February 18</strong> with your top
+    choice
     and your other favorites (up to the number requested) with a sentence or two
     that describes what you especially like about the piece. In some cases, you
     may receive another email tomorrow with a smaller set.
@@ -26,7 +27,8 @@
   </p>
 
   <p>
-    Shortly after this 2<sup>nd</sup> phase is complete, we’ll be opening the public voting
+    Shortly after this 2<sup>nd</sup> phase is complete, we’ll be opening the
+    public voting
     period for Readers’ Choice winners. We’ll keep you posted so you can see how
     all the finalists are doing. We hope you’ll help us spread the word!
   </p>
@@ -56,11 +58,15 @@
         <%= get_instructions(major_code) %>
       </p>
 
-      <% article_infos.group_by{ |i| i[:article].category }.each do |category, doc_infos| %>
+      <% article_infos.group_by { |i| i[:article].category }.each do |category, doc_infos| %>
           <div style="margin-left: 25px;">
             <p>
               <strong><%= "#{category.name}" %></strong><br/>
-              <%= "Please select #{pluralize(@numbers_to_pick[category], 'article')} and note which is your #1 choice." %>
+              <% if @numbers_to_pick[category] == 1 %>
+                  <%= "Please select one article below." %>
+              <% else %>
+                  <%= "Please select #{@numbers_to_pick[category]} articles and note which is your #1 choice." %>
+              <% end %>
             </p>
             <% doc_infos.sort_by { |d| d[:article].code }.each do |doc_info| %>
                 <% if doc_info[:article].code.start_with?("SI") %>
