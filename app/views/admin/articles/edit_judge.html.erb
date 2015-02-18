@@ -1,0 +1,35 @@
+<%= form_tag update_judge_admin_article_path(@article.id), :class => "formtastic article", :novalidate => "novalidate", :accept_charset => "UTF-8" do %>
+    <fieldset class="inputs">
+      <legend>
+        <span>Select a new judge and publisher for article <%= "\"#{@article.pretty_title}\"" %></span>
+      </legend>
+      <ol>
+        <li>
+          <%= label_tag "category_id", "Code:" %>
+          <span id="category_id"><%= @article.category.code %></span>
+        </li>
+        <li>
+          <%= label_tag "category_id", "Category:" %>
+          <span id="category_id"><%= @article.category.name %></span>
+        </li>
+        <li>
+          <%= label_tag "title_id", "Title:" %>
+          <span id="title_id"><%= @article.pretty_title %></span>
+        </li>
+        <li>
+          <%= label_tag "publisher_id", "Publisher:" %>
+          <span id="publisher_id"><%= @article.publisher_name %></span>
+        </li>
+        <li>
+          <%= label_tag "update_judge_id", "Judge:" %>
+          <%= select_tag "update_judge_id", options_for_select(Hash[@judges.map { |j| [j.name, j.id] }]) %>
+        </li>
+      </ol>
+    </fieldset>
+    <fieldset class="actions">
+      <ol>
+        <li><%= submit_tag :submit %></li>
+        <li><%= submit_tag :cancel, :style => "background: #FBFBFB; color: #5E6469;" %></li>
+      </ol>
+    </fieldset>
+<% end %>

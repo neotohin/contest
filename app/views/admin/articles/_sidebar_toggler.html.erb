@@ -1,16 +1,27 @@
 <script>
-  buttonSection = $("div.action_items");
-  buttonSection.append("<span class=\"action_item\"><a href=\"#\" onclick=\"toggleSidebar()\">Toggle Filters</a></span>");
+    buttonSection = $("div.action_items");
+    buttonSection.append("<span class=\"action_item\"><a href=\"#\" onclick=\"toggleSidebar()\">Toggle Filters</a></span>");
     function toggleSidebar() {
         var fss = $("div#filters_sidebar_section");
         var sss = $("div#status_sidebar_section");
         var mainContent = $("#main_content");
-        if (fss.css("display") == "none") {
-            mainContent.css("margin-right", "300px")
+//        if (fss.css("display") == "none") {
+//            mainContent.css("margin-right", "300px")
+//        } else {
+//            mainContent.css("margin-right", "0px")
+//        }
+        if (sss.css("display") == "none") {
+            mainContent.animate({"margin-right": "300px"}, 500, function () {
+                sss.slideToggle(100, function () {
+                    fss.slideToggle(100)
+                })
+            })
         } else {
-            mainContent.css("margin-right", "0px")
+            fss.slideToggle(100, function () {
+                sss.slideToggle(100, function () {
+                    mainContent.animate({"margin-right": "0px"}, 500)
+                })
+            })
         }
-        fss.toggle();
-        sss.toggle();
     }
 </script>

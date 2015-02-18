@@ -1,6 +1,7 @@
 ActiveAdmin.register Article do
 
-  permit_params :list, :of, :attributes, :on, :model, :title, :link, :index, :judge_id
+  permit_params :list, :of, :attributes, :on, :model, :title, :link, :index,
+                :judge_id, :category_id, :update_judge_id
 
   menu :priority => 5
 
@@ -118,9 +119,45 @@ ActiveAdmin.register Article do
     end
   end
 
+  member_action :edit_judge, :method => :get
+
+  member_action :update_judge, :method => :post
+
   controller do
     def scoped_collection
       super.includes :category, :judge # prevents N+1 queries to your database
+    end
+
+    def create
+      article = Article.new
+      if article.update_attributes(permitted_params[:article])
+        flash[:notice] = "Successfully created new article"
+        redirect_to edit_judge_admin_article_path(article)
+      else
+        flash[:error] = "Could not save new article"
+        redirect_to admin_articles_path
+      end
+    end
+
+    def edit_judge
+      set_article
+      @judges = @article.category.judges
+    end
+
+    def update_judge
+      set_article
+      if params[:commit] == "submit"
+        if @article.update_attributes(:judge_id => params[:update_judge_id])
+          flash[:notice] = "Successfully added judge #{@article.judge.name} to this article"
+          redirect_to admin_article_path(@article)
+        else
+          flash[:error] = "Could not save article with this judge correctly"
+          redirect_to admin_articles_path
+        end
+      else
+        @article.destroy
+        redirect_to admin_articles_path
+      end
     end
   end
 
@@ -132,7 +169,7 @@ ActiveAdmin.register Article do
       end
 
       row :phase_2 do |article|
-        show_final_level(article)
+        show_final_level(article).presence || status_tag(:not_chosen)
       end
 
       row :code
@@ -144,6 +181,10 @@ ActiveAdmin.register Article do
       end
 
       row :pretty_title
+
+      row :publisher do |article|
+        article.publisher_name
+      end
 
       row :raw_title do |article|
         article.title
@@ -176,18 +217,33 @@ ActiveAdmin.register Article do
   end
 
   form do |f|
-    inputs "Details for this article in category #{resource.category.name}" do
-      f.input :title
-      f.input :link
-    end
-
-    inputs 'Use this section to reassign this article to another judge' do
-      if resource.a_first_choice_article? || resource.a_second_choice_article?
-        li "WARNING: This article has already been selected as a first or second choice favorite by judge #{resource.judge.name}. Be sure to resubmit votes for this judge.", :style => "color: red;"
+    if f.object.new_record?
+      inputs "Details for this new article" do
+        f.input :title
+        f.input :link
+        f.input :category, :include_blank => false
       end
-      f.input :judge, :collection => resource.category.mappings.map(&:judge).map { |j| [j.name, j.id] }, :include_blank => false
+    else
+      inputs "Details for this article in category #{resource.category.name}" do
+        f.input :title
+        f.input :link
+      end
+
+      inputs 'Use this section to reassign this article to another judge' do
+        if resource.a_first_choice_article? || resource.a_second_choice_article?
+          li "WARNING: This article has already been selected as a first or second choice favorite by judge #{resource.judge.name}. Be sure to resubmit votes for this judge.", :style => "color: red;"
+        end
+        f.input :judge, :collection => resource.category.mappings.map(&:judge).map { |j| [j.name, j.id] }, :include_blank => false
+      end
     end
     f.actions
   end
 
 end
+
+private
+
+def set_article
+  @article = Article.find(params[:id])
+end
+

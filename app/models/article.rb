@@ -5,7 +5,6 @@ class Article < ActiveRecord::Base
 
   validates :title, :presence => true
 
-  # CATEGORY_LETTERS = "(#{Setting.first.category_prefix})"
   CATEGORY_LETTERS = "(SI|F|S|R|I)"
   REGEX     = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
   LAX_REGEX = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)"
@@ -27,15 +26,11 @@ class Article < ActiveRecord::Base
   end
 
   def publisher_name
-    Publisher.where(:code_number => self.publisher_number).first.name || "--"
+    Publisher.where(:code_number => self.publisher_number).first.try(:name) || "--"
   end
 
   def judge
     Judge.find(self.judge_id)
-  end
-
-  def category
-    Category.find(self.category_id)
   end
 
   def comment
