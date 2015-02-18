@@ -5,7 +5,7 @@ class Article < ActiveRecord::Base
 
   validates :title, :presence => true
 
-  CATEGORY_LETTERS = "(SI|F|S|R|I)"
+  CATEGORY_LETTERS = "(SI|F|S|R|I|D)"
   REGEX     = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
   LAX_REGEX = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)"
   SI_REGEX  = "^(#\\d+e?)\\s((SI)\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\.docx"
