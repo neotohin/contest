@@ -7,6 +7,7 @@ class JudgeMailer < ApplicationMailer
   add_template_helper(ApplicationHelper)
 
   def judge_notification(to_name, to_email, judge)
+    email_code
     @judge   = judge
     @details = judge.articles.group_by do |document|
       /([A-Z]{1,2})/.match(document.code)[1]
@@ -16,6 +17,7 @@ class JudgeMailer < ApplicationMailer
   end
 
   def superjudge_notification(to_name, to_email, superjudge)
+    email_code
     @resource    = superjudge
     article_list = superjudge.calculate_judge_mailings
 
@@ -48,6 +50,10 @@ class JudgeMailer < ApplicationMailer
     words = name.split(" ")
     words.pop
     words.join(" ")
+  end
+
+  def email_code
+    @email_code = Digest::MD5.hexdigest("#{Time.now.to_s}-#{self.object_id}")
   end
 
 end
