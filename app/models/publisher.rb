@@ -8,10 +8,6 @@ class Publisher < ActiveRecord::Base
             },
             :allow_nil => true
 
-  def articles
-    Article.where("TITLE LIKE ?", "#{self.code_number}%").all
-  end
-
   def winning_articles
     self.articles.select(&:is_a_final_winner?)
   end
