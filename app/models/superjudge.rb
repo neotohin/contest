@@ -54,6 +54,13 @@ class Superjudge < ActiveRecord::Base
       end
     end
 
+    # Reset final status for all of this superjudge's articles regardless of
+    # their phase 1 status in case a previously chosen phase 1 article was
+    # unchosen.
+    self.articles.reject(&:any_choice_article?).each do |article|
+      article.update_attributes({ :final => nil })
+    end
+
     articles_to_consider.group_by do |article_info|
       article_info[:article].category
     end.map do |category, article_infos|
@@ -86,9 +93,9 @@ class Superjudge < ActiveRecord::Base
       else
         needs_judging_level = articles_by_level[NUMBER_OF_WINNERS - 1][:award_level]
         articles_by_level.each do |article_info|
-          article_info[:article].final = "WINNER" if article_info[:award_level] < needs_judging_level
-          article_info[:article].final = "MAIL" if article_info[:award_level] == needs_judging_level
-          article_info[:article].final = nil if article_info[:award_level] > needs_judging_level
+          article_info[:article].final      = "WINNER" if article_info[:award_level] < needs_judging_level
+          article_info[:article].final      = "MAIL" if article_info[:award_level] == needs_judging_level
+          article_info[:article].final      = nil if article_info[:award_level] > needs_judging_level
           article_info[:article].superjudge = self
           article_info[:article].save
         end
