@@ -56,7 +56,6 @@ ActiveAdmin.register Publisher do
       if @publisher.winning_articles.count < 1
         flash[:error] = "No winning articles exist for #{@publisher.name}"
       else
-        # binding.pry
         Timeout::timeout(60) do
           PublisherMailer.publisher_notification(*set_mail_to_publisher, @publisher).deliver_now
         end
@@ -66,9 +65,9 @@ ActiveAdmin.register Publisher do
         end
         flash[:notice] = "Mail Sent Successfully!"
       end
-    # rescue
-    #   flash[:error] = "Mail NOT Sent Successfully!"
-    # ensure
+    rescue
+      flash[:error] = "Mail NOT Sent Successfully!"
+    ensure
       redirect_to admin_publishers_path
     end
 
@@ -100,6 +99,37 @@ ActiveAdmin.register Publisher do
 
       row "# Third Choices" do |pub|
         third_choice_articles.count { |a| a.publisher_number == pub.code_number }
+      end
+
+      row "# Phase 1 Chosen" do |pub|
+        pub.articles.select(&:any_choice_article?).count
+      end
+
+      row "# Winning Articles" do |pub|
+        pub.winning_articles.count
+      end
+    end
+
+    panel "Articles for Publisher #{resource.name}" do
+      table_for(publisher.articles.sort_by(&:code)) do |document|
+        document.column("Phase 1") do |item|
+          show_prize_level(item)
+        end
+
+        document.column("Phase 2") do |item|
+          show_final_level(item)
+        end
+
+        document.column("Code") { |item| item.code }
+        document.column("Title") { |item|
+          div do
+            div link_to item.pretty_title, admin_article_path(item.id)
+            if (m = item.any_choice_article?)
+              div "Comment: #{m.comment_for(item.id)}", :style => "width: 600px;"
+            end
+          end
+        }
+        document.column("Publisher") { |item| item.publisher.name }
       end
     end
   end

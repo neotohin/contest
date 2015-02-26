@@ -16,6 +16,18 @@ class JudgeMailer < ApplicationMailer
     mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)
   end
 
+  def judge_follow_up(to_name, to_email, judge)
+    email_code
+    @judge   = judge
+    @details = judge.categories.select do |category|
+      category.articles.any?(&:is_a_final_winner?)
+    end.group_by do |category|
+      /([A-Z]{1,2})/.match(category.code)[1]
+    end
+
+    mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)
+  end
+
   def superjudge_notification(to_name, to_email, superjudge)
     email_code
     @resource    = superjudge

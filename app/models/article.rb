@@ -2,6 +2,7 @@ class Article < ActiveRecord::Base
   belongs_to :judge
   belongs_to :superjudge
   belongs_to :category
+  belongs_to :publisher
 
   validates :title, :presence => true
 
@@ -23,19 +24,6 @@ class Article < ActiveRecord::Base
   def publisher_number
     return regex[1] if article_regex
     ""
-  end
-
-  def publisher_name
-    Publisher.where(:code_number => self.publisher_number).first.try(:name) || "--"
-  end
-
-  def categorize
-    publisher_name
-  end
-
-  # a class method that returns the users belonging to a given category.
-  def self.in_category(publisher_name)
-    Article.all.select { |a| a.categorize == publisher_name }
   end
 
   def judge
@@ -97,12 +85,4 @@ class Article < ActiveRecord::Base
     @regex = /#{REGEX}/.match(self.title) || /#{SI_REGEX}/.match(self.title) || /#{LAX_REGEX}/.match(self.title)
   end
 
-  # define our custom search method
-  ransacker :by_categorize,
-            proc { |v|
-              data = Article.in_category(v).map(&:id)
-            data.present? ? data : nil
-            } do |parent|
-    parent.table[:id]
-  end
 end

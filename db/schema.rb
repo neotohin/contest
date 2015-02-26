@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150226020101) do
+ActiveRecord::Schema.define(version: 20150226120149) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -57,10 +57,12 @@ ActiveRecord::Schema.define(version: 20150226020101) do
     t.string   "final"
     t.string   "superjudge_comment"
     t.integer  "superjudge_id"
+    t.integer  "publisher_id"
   end
 
   add_index "articles", ["category_id"], name: "index_articles_on_category_id"
   add_index "articles", ["judge_id"], name: "index_articles_on_judge_id"
+  add_index "articles", ["publisher_id"], name: "index_articles_on_publisher_id"
   add_index "articles", ["superjudge_id"], name: "index_articles_on_superjudge_id"
 
   create_table "categories", force: :cascade do |t|

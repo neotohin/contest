@@ -1,11 +1,8 @@
-<p>Dear <%= get_first_name(@publisher.publisher_contact) %>,</p>
+<p>Dear <%= get_first_name(@judge.name) %>,</p>
 
 <div>
   <p>
-    Thank you for agreeing to publisher the 2015 EDDY Awards! We’re thrilled
-    you’ll
-    be helping recognize the wonderful work produced by independent publishers
-    who make up Edible Communities.
+    This is a follow-up. Below are listed categories that you voted on.
   </p>
 
   <p>
@@ -33,30 +30,23 @@
   <p>
     P.S. Your selections will help determine 5 finalists in each category,
     which
-    will be posted to <a href="ediblefeast.com">ediblefeast.com</a> for Readers’
-    Choice voting on Monday,
-    February 22. Your vote will also inform Critics’ Choice winners. All winners
-    will be revealed online on Friday, March 20.
+    have been posted on <a href="ediblefeast.com">ediblefeast.com</a>.
   </p>
 
   <hr/>
 </div>
 
 <div>
-  <p>Your entries by category are:</p>
-  <% @details.each do |major_code, articles| %>
+  <p>The categories you voted on that had winning articles are:</p>
+  <% @details.each do |major_code, categories| %>
       <p>
         <strong><%= get_major(major_code) %></strong>
       </p>
-
-      <% articles.group_by(&:category_id).each do |category_id, docs| %>
+      <% categories.each do |category| %>
           <div style="margin-left: 25px;">
-            <p>
-              <strong><%= Category.find(category_id).name %></strong>
-            </p>
-            <% docs.each do |doc| %>
-                <li><%= doc.pretty_title %></li>
-            <% end %>
+            <li>
+              <a href="<%= category.url %>"><%= category.name %></a>
+            </li>
           </div>
       <% end %>
       <br/>

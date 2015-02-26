@@ -11,7 +11,6 @@ class PublisherMailer < ApplicationMailer
       /([A-Z]{1,2})/.match(document.code)[1]
     end
 
-puts "********************* #{to_name}  -  #{to_email}"
     mail(:to => %("#{to_name}" <#{to_email}>), :subject => Setting.first.email_subject)
   end
 

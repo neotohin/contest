@@ -28,7 +28,7 @@ ActiveAdmin.register Article do
   filter :judge, :as => :select, :collection => Judge.all.sort_by(&:name)
   filter :category, :as => :select, :collection => Category.all.sort_by(&:name)
   filter :title, :label => "Article"
-  filter :by_categorize_in, :label => "Publisher", :as => :select, :collection => Publisher.all.map(&:name) + ["--"]
+  filter :publisher
 
   index do
     render :partial => 'sidebar_toggler'
@@ -66,7 +66,7 @@ ActiveAdmin.register Article do
     end
 
     column :publisher do |article|
-      article.publisher_name
+      article.publisher.name
     end
 
   end
@@ -112,11 +112,11 @@ ActiveAdmin.register Article do
     column :superjudge_comment
 
     column :publisher do |article|
-      article.publisher_name
+      article.publisher.name
     end
 
     column :publisher_code_number do |article|
-      article.publisher_number
+      article.publisher.code_number
     end
   end
 
@@ -184,7 +184,7 @@ ActiveAdmin.register Article do
       row :pretty_title
 
       row :publisher do |article|
-        article.publisher_name
+        article.publisher.name
       end
 
       row :raw_title do |article|

@@ -83,6 +83,11 @@ ActiveAdmin.register Category do
         document.column("Phase 1") do |item|
           show_prize_level(item)
         end
+
+        document.column("Phase 2") do |item|
+          show_final_level(item)
+        end
+
         document.column("Code") { |item| item.code }
         document.column("Title") { |item|
           div do
@@ -92,7 +97,7 @@ ActiveAdmin.register Category do
             end
           end
         }
-        document.column("Publisher") { |item| item.publisher_name }
+        document.column("Publisher") { |item| item.publisher.name }
         document.column("Judge") { |item| item.judge.name }
       end
     end

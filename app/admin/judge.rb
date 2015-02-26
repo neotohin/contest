@@ -101,7 +101,7 @@ ActiveAdmin.register Judge do
         flash[:error] = "Nothing to mail for #{@judge.name}"
       else
         Timeout::timeout(10) do
-          JudgeMailer.judge_notification(*set_mail_to_people, @judge).deliver_now
+          JudgeMailer.judge_follow_up(*set_mail_to_people, @judge).deliver_now
         end
         if Setting.first.mail_option
           @judge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
@@ -238,6 +238,11 @@ ActiveAdmin.register Judge do
         document.column("Phase 1") do |item|
           show_prize_level(item)
         end
+
+        document.column("Phase 2") do |item|
+          show_final_level(item)
+        end
+
         document.column("Code") { |item| item.code }
         document.column("Title") { |item|
           div do
@@ -247,7 +252,7 @@ ActiveAdmin.register Judge do
             end
           end
         }
-        document.column("Publisher") { |item| item.publisher_name }
+        document.column("Publisher") { |item| item.publisher.name }
       end
     end
   end
