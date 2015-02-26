@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150216035706) do
+ActiveRecord::Schema.define(version: 20150226020101) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20150216035706) do
     t.integer  "supercategory_id"
     t.integer  "superjudge_id"
     t.integer  "report_choices"
+    t.string   "url"
   end
 
   add_index "categories", ["code"], name: "index_categories_on_code"
@@ -113,8 +114,12 @@ ActiveRecord::Schema.define(version: 20150216035706) do
   create_table "publishers", force: :cascade do |t|
     t.string   "name"
     t.string   "code_number"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.string   "publisher_contact"
+    t.string   "publisher_email"
+    t.boolean  "sent_mail"
+    t.datetime "sent_mail_time"
   end
 
   add_index "publishers", ["code_number"], name: "index_publishers_on_code_number"

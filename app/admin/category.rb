@@ -2,7 +2,7 @@ include ApplicationHelper
 
 ActiveAdmin.register Category do
 
-  permit_params :list, :of, :attributes, :on, :model, :name, :code,
+  permit_params :list, :of, :attributes, :on, :model, :name, :code, :url,
                 :report_choices, :superjudge_id, :supercategory_id, :index
 
   menu :priority => 4
@@ -65,6 +65,8 @@ ActiveAdmin.register Category do
       row :report_choices do
         report_choice_tags(category.report_choices)
       end
+
+      row :url
     end
 
     panel "Judges for Category #{resource.code} - #{resource.name}" do
@@ -104,6 +106,7 @@ ActiveAdmin.register Category do
       f.input :name
       f.input :code
       f.input :report_choices, :as => :select, :collection => [1, 2, 3]
+      f.input :url
     end
     f.actions
   end

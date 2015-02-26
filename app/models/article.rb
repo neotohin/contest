@@ -1,14 +1,14 @@
 class Article < ActiveRecord::Base
-	belongs_to :judge
-	belongs_to :superjudge
+  belongs_to :judge
+  belongs_to :superjudge
   belongs_to :category
 
   validates :title, :presence => true
 
   CATEGORY_LETTERS = "(SI|F|S|R|I|D)"
-  REGEX     = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
-  LAX_REGEX = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)"
-  SI_REGEX  = "^(#\\d+e?)\\s((SI)\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\.docx"
+  REGEX            = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\s+--.*"
+  LAX_REGEX        = "^(#\\d+e?)\\s(#{CATEGORY_LETTERS}\\.\\d+\\.\\d+)\\s+--\\s+(.*)"
+  SI_REGEX         = "^(#\\d+e?)\\s((SI)\\.\\d+\\.\\d+)\\s+--\\s+(.*)\\.docx"
 
   def pretty_title
     return regex[4] if article_regex
@@ -27,6 +27,15 @@ class Article < ActiveRecord::Base
 
   def publisher_name
     Publisher.where(:code_number => self.publisher_number).first.try(:name) || "--"
+  end
+
+  def categorize
+    publisher_name
+  end
+
+  # a class method that returns the users belonging to a given category.
+  def self.in_category(publisher_name)
+    Article.all.select { |a| a.categorize == publisher_name }
   end
 
   def judge
@@ -77,12 +86,23 @@ class Article < ActiveRecord::Base
     self.final == "WINNER" || self.final == "MAIL"
   end
 
-  private
+  def is_a_final_winner?
+    self.final == "WINNER" || self.final == "WINNER_BY_CHOICE"
+  end
 
   attr_reader :regex
 
   def article_regex
     return @regex if @regex
     @regex = /#{REGEX}/.match(self.title) || /#{SI_REGEX}/.match(self.title) || /#{LAX_REGEX}/.match(self.title)
+  end
+
+  # define our custom search method
+  ransacker :by_categorize,
+            proc { |v|
+              data = Article.in_category(v).map(&:id)
+            data.present? ? data : nil
+            } do |parent|
+    parent.table[:id]
   end
 end

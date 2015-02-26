@@ -28,6 +28,7 @@ ActiveAdmin.register Article do
   filter :judge, :as => :select, :collection => Judge.all.sort_by(&:name)
   filter :category, :as => :select, :collection => Category.all.sort_by(&:name)
   filter :title, :label => "Article"
+  filter :by_categorize_in, :label => "Publisher", :as => :select, :collection => Publisher.all.map(&:name) + ["--"]
 
   index do
     render :partial => 'sidebar_toggler'

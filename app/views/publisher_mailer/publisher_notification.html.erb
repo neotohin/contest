@@ -1,0 +1,73 @@
+<p>Dear <%= get_first_name(@publisher.publisher_contact) %>,</p>
+
+<div>
+  <p>
+    Thank you for agreeing to publisher the 2015 EDDY Awards! We’re thrilled you’ll
+    be helping recognize the wonderful work produced by independent publishers
+    who make up Edible Communities.
+  </p>
+
+  <p>
+    Depending on your browser, each link will either open up a new window or tab
+    or potentially even download the PDF or jpeg to your computer. If you
+    experience any problems viewing your entries, please email
+    <a href="mailto:eddyawards@ediblemedia.com">eddyawards@ediblemedia.com</a> to let us know.
+  </p>
+
+  <p>
+    Once again, thanks so much for being a crucial part of the EDDY Awards.
+    Please quickly reply to this email so we know you received it.
+  </p>
+
+  <p>
+    My best,<br/>Lara Bashkoff
+  </p>
+
+  <p>
+    Chief Digital Officer, Edible Media<br/>
+    <a href="mailto:lara@ediblemedia.com">lara@ediblemedia.com</a>
+  </p>
+
+  <p>
+    P.S. Your selections will help determine 5 finalists in each category,
+    which
+    will be posted to <a href="ediblefeast.com">ediblefeast.com</a> for Readers’ Choice voting on Monday,
+    February 22. Your vote will also inform Critics’ Choice winners. All winners
+    will be revealed online on Friday, March 20.
+  </p>
+
+  <hr/>
+</div>
+
+<div>
+  <p>Your entries by category are:</p>
+  <% @details.each do |major_code, articles| %>
+      <p>
+        <strong><%= get_major(major_code) %></strong>
+      </p>
+
+      <% articles.group_by(&:category_id).each do |category_id, docs| %>
+          <div style="margin-left: 25px;">
+            <p>
+              <strong><%= Category.find(category_id).name %></strong>
+            </p>
+            <% docs.each do |doc| %>
+                <% if doc.code.start_with?("SI") %>
+                    <li>
+                      <%= doc.pretty_title %>
+                    </li>
+                <% else %>
+                    <li>
+                      <a href="<%= doc.link %>"><%= doc.pretty_title %></a>
+                    </li>
+                <% end %>
+            <% end %>
+          </div>
+      <% end %>
+      <br/>
+  <% end %>
+</div>
+<br/>
+<hr/>
+<br/>
+<span style="color: white"><%= @email_code %></span>

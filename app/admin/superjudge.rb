@@ -82,7 +82,7 @@ ActiveAdmin.register Superjudge do
       set_superjudge
       if @superjudge.all_articles.count { |article_info| article_info[:article].final == "MAIL" } > 0
         Timeout::timeout(10) do
-          JudgeMailer.superjudge_notification(*set_mail_to_people, @superjudge).deliver_now
+          JudgeMailer.superjudge_notification(*set_mail_to_superpeople, @superjudge).deliver_now
         end
         if Setting.first.mail_option
           @superjudge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)
@@ -257,7 +257,7 @@ def set_superjudge
   @superjudge = Superjudge.find(params[:id])
 end
 
-def set_mail_to_people
+def set_mail_to_superpeople
   if Setting.first.mail_option
     [@superjudge.name, @superjudge.email]
   else
