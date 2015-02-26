@@ -13,6 +13,11 @@ ActiveAdmin.register Publisher do
     mail_option_status
   end
 
+  filter :name
+  filter :code_number
+  filter :publisher_contact
+  filter :publisher_email
+
   index do
     column :name do |pub|
       link_to pub.name, admin_publisher_path(pub)
