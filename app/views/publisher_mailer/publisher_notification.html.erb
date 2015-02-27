@@ -1,61 +1,123 @@
-<p>Dear <%= get_first_name(@publisher.publisher_contact) %>,</p>
+<p xmlns="http://www.w3.org/1999/html">Congratulations <%= get_first_name(@publisher.publisher_contact) %>!</p>
 
 <div>
   <p>
-    Thank you for agreeing to publisher the 2015 EDDY Awards! We’re thrilled
-    you’ll
-    be helping recognize the wonderful work produced by independent publishers
-    who make up Edible Communities.
+    I’m thrilled to let you know you have 1 or more EDDYs finalists – listed
+    below!
+    Please <strong>go to
+    <a href="http://www.ediblefeast.com/eddyawards">www.ediblefeast.com/eddyawards</a>
+    as soon as possible to review your finalists</strong> to ensure they’re
+    ready for
+    Reader’s Choice public voting. We’ll be resetting votes by 8pm ET today to
+    kickoff the EDDY Awards to the world. (This means you can test voting
+    throughout the day since they’ll be cleared.)
   </p>
 
   <p>
-    Depending on your browser, each link will either open up a new window or tab
-    or potentially even download the PDF or jpeg to your computer. If you
-    experience any problems viewing your entries, please email
-    <a href="mailto:eddyawards@ediblemedia.com">eddyawards@ediblemedia.com</a>
-    to let us know.
+    This was a big year for Edible Communities’ EDDY Awards:
+
+  <p>
+  <li style="margin-left: 10px;">
+    58 publishers submitted nearly 1,200 entries in 23 categories.
+    So many of the judges said how difficult it was to pick their favorites
+    because the entries were top-notch. This has truly been a fantastic
+    competition.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    The
+    <a href="http://www.ediblefeast.com/eddyawards/vote/2015/judges">2015 panel
+      of judges</a>
+    is phenomenal. They received entries in categories
+    that matched their expertise, and these entries were randomized. They shared
+    why they loved their favorites with quotes you’ll see throughout the site.
+    We accomplished this all with a new application we developed especially for
+    the
+    EDDYs.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    The site itself includes a voting mechanism, and it’s mobile optimized
+    for easy voting from tablets and phones. (Also, refresh a category page
+    to see finalists rotate for fairness.)
+  </li>
+  </p>
   </p>
 
   <p>
-    Once again, thanks so much for being a crucial part of the EDDY Awards.
-    Please quickly reply to this email so we know you received it.
+    Thank you for allowing me to digitally host such a magnificent body of work
+    and a celebration of Edible Communities. The world is in for a wonderful
+    treat!
   </p>
 
   <p>
-    My best,<br/>Lara Bashkoff
+    Congrats again!<br/>
+    Lara
   </p>
-
+  ****
   <p>
     Chief Digital Officer, Edible Media<br/>
     <a href="mailto:lara@ediblemedia.com">lara@ediblemedia.com</a>
   </p>
 
   <p>
-    P.S. Your selections will help determine 5 finalists in each category,
-    which
-    will be posted to <a href="ediblefeast.com">ediblefeast.com</a> for Readers’
-    Choice voting on Monday,
-    February 22. Your vote will also inform Critics’ Choice winners. All winners
-    will be revealed online on Friday, March 20.
+    P.S. A number of important points:
+
+  <p>
+  <li style="margin-left: 10px;">
+    Reader’s Choice public voting will be open to the public until 11:59pm ET
+    Sunday, March 15, 2015. Over the next few days, we’ll email sample 1)
+    digital ads, 2) social media posts with #EDDYs2015, and 3) links to your
+    2015 EDDYs publisher page and finalist detail pages. We highly encourage
+    you to spread the word <strong>(i.e., tell everyone you know and their
+    friends and their friends’ friends online and offline)</strong> to vote
+    for your finalists and your Edible Communities’ brethren.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    These finalists are all eligible to be the Critic’s Choice winner and/or
+    the Reader’s Choice winner in their respective categories.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    Best Special Issue isn’t part of this communication since there’s only a
+    Critic’s Choice winner for this category. We’re announcing the finalists
+    and Critic’s Choice winner for Best Special Issue at the Awards Dinner on
+    Thursday, March 19, 2015.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    Best Email Newsletter didn’t receive enough entries, so we had to drop
+    this category this year. However, we’ll be sharing highlights at the
+    Awards Dinner as well.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    The EDDY rules are simple: 1) your entry had to have been published
+    and/or available in 2014; 2) publishers could submit up to 2 entries per
+    category; and 3) publishers could submit a piece to one category only –
+    except for Best Feature or Story Photography and Best Recipe Photography,
+    which could have entries in one other category.
+  </li>
+  </p>
   </p>
 
   <hr/>
 </div>
 
 <div>
-  <p>Your entries by category are:</p>
+  <p>Your finalists!</p>
   <% @details.each do |major_code, articles| %>
-      <p>
-        <strong><%= get_major(major_code) %></strong>
-      </p>
-
       <% articles.group_by(&:category_id).each do |category_id, docs| %>
-          <div style="margin-left: 25px;">
-            <p>
-              <strong><%= Category.find(category_id).name %></strong>
-            </p>
+          <div style="margin-left: 10px;">
             <% docs.each do |doc| %>
-                <li><%= doc.pretty_title %></li>
+                <li><%= get_major(major_code) %> / <%= Category.find(category_id).name %>:&nbsp;&nbsp;<strong><%= doc.pretty_title %></strong></li>
             <% end %>
           </div>
       <% end %>
