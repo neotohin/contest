@@ -1,7 +1,7 @@
 ActiveAdmin.register Article do
 
   permit_params :list, :of, :attributes, :on, :model, :title, :link, :index,
-                :judge_id, :category_id, :update_judge_id
+                :judge_id, :category_id, :update_judge_id, :publisher_id
 
   menu :priority => 5
 
@@ -222,6 +222,7 @@ ActiveAdmin.register Article do
       inputs "Details for this new article" do
         f.input :title
         f.input :link
+        f.input :publisher
         f.input :category, :include_blank => false
       end
     else

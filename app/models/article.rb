@@ -26,10 +26,6 @@ class Article < ActiveRecord::Base
     ""
   end
 
-  def judge
-    Judge.find(self.judge_id)
-  end
-
   def comment
     if (mapping = any_choice_article?)
       mapping.comment_for(self.id)
