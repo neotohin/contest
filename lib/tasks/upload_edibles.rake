@@ -26,4 +26,20 @@ namespace :upload_edibles do
     end
   end
 
+  desc "Upload URL's to categories."
+  task :categories_urls, [:file] => :environment do |t, args|
+    if args[:file] && File.exists?(args[:file])
+      cats = CSV.read(args[:file], :headers => [:name, :url])
+      cats.each do |cat|
+        c = Category.where(:name => cat[:name]).first
+        if c
+          c.url = cat[:url]
+          c.save!
+        end
+        puts "Adding #{cat[:url]} to category #{cat[:name]}"
+      end
+    else
+      puts "File does not exist. Specify command as \"rake upload_edibles:categories_urls[<FILE_PATH>]\""
+    end
+   end
 end
