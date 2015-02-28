@@ -21,7 +21,8 @@ ActiveAdmin.register Category do
     column :code
 
     column :name do |category|
-      link_to category.name, admin_category_path(category.id)
+      span link_to category.name, admin_category_path(category.id)
+      span link_to "(URL)", category.url
     end
 
     column "# Articles" do |category|
@@ -66,7 +67,9 @@ ActiveAdmin.register Category do
         report_choice_tags(category.report_choices)
       end
 
-      row :url
+      row :url do
+        link_to category.url, category.url
+      end
     end
 
     panel "Judges for Category #{resource.code} - #{resource.name}" do
