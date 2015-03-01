@@ -20,7 +20,7 @@ class JudgeMailer < ApplicationMailer
     email_code
     @judge   = judge
     @details = judge.categories.select do |category|
-      category.articles.any?(&:is_a_final_winner?)
+      category.articles.count > 0 && !category.code.start_with?("SI")
     end.group_by do |category|
       /([A-Z]{1,2})/.match(category.code)[1]
     end

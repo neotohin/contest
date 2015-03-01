@@ -109,7 +109,9 @@ ActiveAdmin.register Judge do
         end
         flash[:notice] = "Mail Sent Successfully!"
       end
-    rescue
+    rescue => e
+      puts "#{e.message}"
+      puts "#{e.backtrace}"
       flash[:error] = "Mail NOT Sent Successfully!"
     ensure
       redirect_to admin_judges_path

@@ -1,51 +1,87 @@
-<p>Dear <%= get_first_name(@judge.name) %>,</p>
+<p>Hi <%= get_first_name(@judge.name) %>,</p>
 
 <div>
   <p>
-    This is a follow-up. Below are listed categories that you voted on.
+    Great news! The EDDY Awards are live for Reader’s Choice voting at
+    <a href="http://www.ediblefeast.com/eddyawards">www.ediblefeast.com/eddyawards</a>.
+    We're thrilled with the set of finalists that were so thoughtfully curated
+    by you and the rest of our
+    <a href="http://www.ediblefeast.com/eddyawards/vote/2015/judges">phenomenal panel of judges</a>.
   </p>
 
   <p>
-    Depending on your browser, each link will either open up a new window or tab
-    or potentially even download the PDF or jpeg to your computer. If you
-    experience any problems viewing your entries, please email
-    <a href="mailto:eddyawards@ediblemedia.com">eddyawards@ediblemedia.com</a>
-    to let us know.
+    Through Sunday, March 15 at 11:59pm ET, please <strong>go to the
+    <a href="http://www.ediblefeast.com/eddyawards">site</a> as often as you can
+    to vote for your favorites</strong> and see how they’re doing! (You can vote
+    once daily in each category.) We’re using #EDDYS2015 to promote the EDDYs in
+    social media, so we hope you'll spread the word about the Awards and
+    encourage your followers to vote too.
   </p>
 
   <p>
-    Once again, thanks so much for being a crucial part of the EDDY Awards.
-    Please quickly reply to this email so we know you received it.
+    The categories you reviewed entries in are noted below so you can see the
+    finalists that made it through. All finalists are eligible to be the
+    Reader’s Choice winner as well as the Critic’s Choice winner in their
+    respective categories. All winners (including the Critic’s Choice recipient for
+    Best Special Issue) will be announced on Thursday, March 19, 2015 at the
+    <a href="http://www.ediblefeast.com/my-edible-grid-view">Edible Communities</a>'
+    Annual Meeting in New Orleans. We’ll let you know who wins shortly thereafter.
   </p>
 
   <p>
-    My best,<br/>Lara Bashkoff
+    Many thanks again for participating in the 2015 EDDY Awards. Your feedback
+    on entries is deeply appreciated by all the publishers and has helped make
+    the Awards even more special this year!
   </p>
 
+  <p>
+    My very best,<br/>Lara
+  </p>
+  ****
   <p>
     Chief Digital Officer, Edible Media<br/>
     <a href="mailto:lara@ediblemedia.com">lara@ediblemedia.com</a>
   </p>
 
   <p>
-    P.S. Your selections will help determine 5 finalists in each category,
-    which
-    have been posted on <a href="ediblefeast.com">ediblefeast.com</a>.
+    P.S. A few notes about the 2015 EDDY Awards:
+
+  <p>
+  <li style="margin-left: 10px;">
+    58 publishers submitted nearly 1,200 entries in 23 categories.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    You are part of an
+    <a href="http://www.ediblefeast.com/eddyawards/vote/2015/judges">outstanding panel</a>
+    of more than 50 judges that includes award-winning chefs, authors, editors,
+    bloggers, nutritionists, farmers, gardeners, activists and more. Each of you
+    received a set of randomized entries in categories that matched your
+    expertise. We accomplished this with a new application we developed
+    especially for the EDDYs.
+  </li>
+  </p>
+  <p>
+  <li style="margin-left: 10px;">
+    The <a href="http://www.ediblefeast.com/eddyawards">site</a> is mobile
+    optimized for easy voting from tablets and phones. Also, refresh a category
+    page to see finalists rotate for fairness.
+  </li>
+  </p>
   </p>
 
   <hr/>
 </div>
 
 <div>
-  <p>The categories you voted on that had winning articles are:</p>
+  <% number_of_categories = @details.map { |m, c| c.count }.reduce(&:+) %>
+  <p>Your EDDY Awards <%= "category".pluralize(number_of_categories) %>:</p>
   <% @details.each do |major_code, categories| %>
-      <p>
-        <strong><%= get_major(major_code) %></strong>
-      </p>
       <% categories.each do |category| %>
           <div style="margin-left: 25px;">
             <li>
-              <a href="<%= category.url %>"><%= category.name %></a>
+              <%= get_major(major_code) %> - <a href="<%= category.url %>"><%= category.name %></a>
             </li>
           </div>
       <% end %>
