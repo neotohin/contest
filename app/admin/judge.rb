@@ -10,11 +10,11 @@ ActiveAdmin.register Judge do
   scope("Mail Not Sent") { |scope| scope.where(:sent_mail => nil) }
 
   scope("Voted?") do |scope|
-    Judge.where(:id => scope.select { |judge| judge.all_votes_in? == "Yes" }.map(&:id))
+    Judge.where(:id => scope.select { |judge| judge.votes_in? == "Yes" }.map(&:id))
   end
 
   scope("Not Voted?") do |scope|
-    Judge.where(:id => scope.select { |judge| judge.all_votes_in? == "No" }.map(&:id))
+    Judge.where(:id => scope.select { |judge| judge.votes_in? == "No" }.map(&:id))
   end
 
   sidebar :status, :only => :index, :priority => 0 do
@@ -46,7 +46,7 @@ ActiveAdmin.register Judge do
     end
 
     column "Voted?" do |judge|
-      status_tag judge.all_votes_in?
+      status_tag judge.votes_in?
     end
 
     actions :defaults => false do |judge|
@@ -212,8 +212,8 @@ ActiveAdmin.register Judge do
 
       row :sent_mail_time
 
-      row :all_votes_in? do
-        status_tag judge.all_votes_in?
+      row :votes_in? do
+        status_tag judge.votes_in?
       end
 
       row "# Categories" do

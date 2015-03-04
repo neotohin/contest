@@ -28,7 +28,7 @@ class Superjudge < ActiveRecord::Base
     end
   end
 
-  def all_votes_in?
+  def votes_in?
     return "No" unless all_articles.any? { |article_info| article_info[:article].is_a_final_article? }
     all_articles.any? { |article_info| article_info[:article].final == "MAIL" } ? "No" : "Yes"
   end

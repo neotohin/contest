@@ -10,11 +10,11 @@ ActiveAdmin.register Superjudge do
   scope("Mail Not Sent") { |scope| scope.where(:sent_mail => nil) }
 
   scope("Voted?") do |scope|
-    Superjudge.where(:id => scope.select { |superjudge| superjudge.all_votes_in? == "Yes" }.map(&:id))
+    Superjudge.where(:id => scope.select { |superjudge| superjudge.votes_in? == "Yes" }.map(&:id))
   end
 
   scope("Not Voted?") do |scope|
-    Superjudge.where(:id => scope.select { |superjudge| superjudge.all_votes_in? == "No" }.map(&:id))
+    Superjudge.where(:id => scope.select { |superjudge| superjudge.votes_in? == "No" }.map(&:id))
   end
 
   sidebar :status, :only => :index, :priority => 0 do
@@ -47,7 +47,7 @@ ActiveAdmin.register Superjudge do
     end
 
     column "Voted?" do |superjudge|
-      status_tag superjudge.all_votes_in?
+      status_tag superjudge.votes_in?
     end
 
     actions :defaults => false do |superjudge|
@@ -188,8 +188,8 @@ ActiveAdmin.register Superjudge do
 
       row :sent_mail_time
 
-      row :all_votes_in? do
-        status_tag superjudge.all_votes_in?
+      row :votes_in? do
+        status_tag superjudge.votes_in?
       end
 
       row "# Categories" do

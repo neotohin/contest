@@ -11,9 +11,15 @@ class Judge < ActiveRecord::Base
             },
             :presence => true
 
-  def all_votes_in?
-    first_choices = self.mappings.map(&:first_choice)
-    first_choices.count > 0 && first_choices.all?  ? "Yes" : "No"
+  def votes_in?
+    return "No" if self.articles.count < 1
+    nonzero_categories = self.articles.group_by(&:category).select do |category, articles|
+      articles.count > 0
+    end
+
+    nonzero_categories.all? do |category, articles|
+      articles.any?(&:any_choice_article?)
+    end ? "Yes" : "No"
   end
 
 end
