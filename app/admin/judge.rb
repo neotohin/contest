@@ -5,6 +5,10 @@ ActiveAdmin.register Judge do
 
   menu :priority => 7
 
+  def scoped_collection
+    Judge.includes(:category, :article)
+  end
+
   scope("All") { |scope| scope.all }
   scope("Mail Sent") { |scope| scope.where(:sent_mail => true) }
   scope("Mail Not Sent") { |scope| scope.where(:sent_mail => nil) }

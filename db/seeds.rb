@@ -65,7 +65,7 @@ end
 # Get the article names from the server
 
 s3 = AWS::S3.new
-objects = s3.buckets["edible-2015-contest"].objects
+objects = s3.buckets["edible-2016-contest"].objects
 objects.each_with_index do |obj, index|
   next unless m = /^#\d+e?\s(#{CATEGORY_LETTERS}\.\d)\.\d+\s+--/.match(obj.key)
   puts obj.key
