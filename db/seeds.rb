@@ -4,7 +4,7 @@ require 'nokogiri'
 # Fill settings table with info
 Setting.destroy_all
 Setting.create(
-    :articles_home    => 'https://s3.amazonaws.com/ediblecommunities/articles-2015/',
+    :articles_home    => 'https://s3.amazonaws.com/ediblecommunities/articles-2016/',
     :csv_basename     => 'Entry distribution to judges tables.csv',
     :mail_option      => false,
     :default_email    => 'bashki.edible@gmail.com',
@@ -72,7 +72,7 @@ objects.each_with_index do |obj, index|
   d = Article.create(
       :index => index.to_s,
       :title => obj.key.strip,
-      :link  => obj.url_for(:read, :expires => "2015-03-23")
+      :link  => obj.url_for(:read, :expires => "2016-03-23")
   )
   d.category_id = Category.where(:code => m[1]).first.id
   d.save
