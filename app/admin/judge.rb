@@ -105,7 +105,7 @@ ActiveAdmin.register Judge do
         flash[:error] = "Nothing to mail for #{@judge.name}"
       else
         Timeout::timeout(10) do
-          JudgeMailer.judge_follow_up(*set_mail_to_people, @judge).deliver_now
+          JudgeMailer.judge_notification(*set_mail_to_people, @judge).deliver_now
         end
         if Setting.first.mail_option
           @judge.update_attributes(:sent_mail => true, :sent_mail_time => Time.now)

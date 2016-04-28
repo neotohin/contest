@@ -4,7 +4,7 @@ require 'nokogiri'
 # Fill settings table with info
 Setting.destroy_all
 Setting.create(
-    :articles_home    => 'https://s3.amazonaws.com/ediblecommunities/articles-2016/',
+    :articles_home    => 'https://s3.amazonaws.com/edible-2016-contest/',
     :csv_basename     => 'Entry distribution to judges tables.csv',
     :mail_option      => false,
     :default_email    => 'bashki.edible@gmail.com',
